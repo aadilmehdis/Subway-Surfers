@@ -6,6 +6,7 @@ var t;
 var tracks = [];
 var barricades = [];
 var pavement = [];
+var trees = []
 
 main();
 
@@ -25,6 +26,11 @@ function main() {
   for(var i=0 ;i< 40;++i)
   {
       pavement.push(new Pavement(gl, [0,-3.3,+50*i]));
+  }
+  for(var i=0 ;i< 40;++i)
+  {
+      trees.push(new Tree(gl, [3.9,0,+10*i], 0.25));
+      trees.push(new Tree(gl, [-3.9,0,+10*i], 0.25));
   }
   for(var i=0 ;i< 100;++i)
   {
@@ -233,6 +239,10 @@ function drawScene(gl, programInfo, deltaTime) {
     for(var i=0;i<pavement.length;++i)
     {
         pavement[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    }
+    for(var i=0;i<trees.length;++i)
+    {
+        trees[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
 }
 
