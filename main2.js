@@ -3,10 +3,16 @@ var target = [0,0,2000];
 var up = [0, 1, 0];
 
 var t;
+var player;
 var tracks = [];
 var barricades = [];
 var pavement = [];
-var trees = []
+var trees = [];
+var crates = [];
+var jetpacks = [];
+var jumpshoes = [];
+
+
 
 main();
 
@@ -17,7 +23,16 @@ function main() {
   const canvas = document.querySelector('#glcanvas');
   const gl = canvas.getContext('webgl');
 
-  t = new Train(gl, [0,-2,50], 4);
+  t = new Train(gl, [0,-2,100], 10);
+  player = new Player(gl, [0,-2.5,7]);
+
+  keyBindings();
+
+  for(var i=0 ;i< 10;++i)
+  {
+      jetpacks.push(new JetPack(gl, [1,0,20*i]));
+      jumpshoes.push(new JumpShoes(gl, [-1,0,20*i+2]));
+  }
 
   for(var i=0 ;i< 100;++i)
   {
@@ -25,12 +40,16 @@ function main() {
   }
   for(var i=0 ;i< 40;++i)
   {
+    crates.push(new Crate(gl, [0,2,+50*i]));
+  }
+  for(var i=0 ;i < 40;++i)
+  {
       pavement.push(new Pavement(gl, [0,-3.3,+50*i]));
   }
   for(var i=0 ;i< 40;++i)
   {
-      trees.push(new Tree(gl, [3.9,0,+10*i], 0.25));
-      trees.push(new Tree(gl, [-3.9,0,+10*i], 0.25));
+      trees.push(new Tree(gl, [3.9,0,+20*i], 0.25));
+      trees.push(new Tree(gl, [-3.9,0,+20*i], 0.25));
   }
   for(var i=0 ;i< 100;++i)
   {
@@ -38,9 +57,9 @@ function main() {
       lane = Math.floor(Math.random() * 3)
       if(lane == 0) pos.push(0);
       else if(lane == 1) pos.push(1.75);
-      else pos.push(-1.75);
+      else pos.push(-2);
 
-      pos.push(-2);
+      pos.push(-2.5);
 
       pos.push(eye[2] + 20*i);
 
@@ -124,8 +143,7 @@ function main() {
     const deltaTime = now - then;
     then = now;
 
-    eye[2] += 0.1;
-    t.tick(deltaTime);
+    tick(deltaTime);
     drawScene(gl, programInfo, deltaTime);
 
     requestAnimationFrame(render);
@@ -189,6 +207,22 @@ function isPowerOf2(value) {
   return (value & (value - 1)) == 0;
 }
 
+
+function tick(deltaTime)
+{
+    eye[2] += 0.1;
+    t.tick(deltaTime);
+    player.tick(deltaTime);
+    for(var i=0;i<jetpacks.length; ++i)
+    {
+        jetpacks[i].tick();
+    }
+    for(var i=0;i<jumpshoes.length; ++i)
+    {
+        jumpshoes[i].tick();
+    }
+}
+
 //
 // Draw the scene.
 //
@@ -228,6 +262,7 @@ function drawScene(gl, programInfo, deltaTime) {
     mat4.lookAt(viewMatrix, eye, target, up);
 
     t.drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    player.drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     for(var i=0;i<tracks.length;++i)
     {
         tracks[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
@@ -240,9 +275,21 @@ function drawScene(gl, programInfo, deltaTime) {
     {
         pavement[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
+    for(var i=0;i<crates.length;++i)
+    {
+        crates[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    }
     for(var i=0;i<trees.length;++i)
     {
         trees[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    }
+    for(var i=0;i<jumpshoes.length;++i)
+    {
+        jumpshoes[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    }
+    for(var i=0;i<jetpacks.length;++i)
+    {
+        jetpacks[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
 }
 
@@ -294,4 +341,36 @@ function loadShader(gl, type, source) {
   }
 
   return shader;
+}
+
+
+function keyBindings()
+{
+     
+    Mousetrap.bind('w', function() {
+        eye[1] += 0.1;
+    });
+    Mousetrap.bind('s', function() {
+        eye[1] -= 0.1;
+    });
+    Mousetrap.bind('left', function() {
+        player.pos[0] += 2;
+    });
+    Mousetrap.bind('right', function() {
+        player.pos[0] -= 2;
+    });
+    Mousetrap.bind('up', function() {
+        player.speed = [0,0.24,0.1];
+        // player.pos[1] -= 2;
+    }, 'keydown');
+    Mousetrap.bind('down', function() {
+        // player.pos[] -= 2;
+    });
+    Mousetrap.bind('a', function() {
+        eye[0] -= 2;
+    });
+    Mousetrap.bind('d', function() {
+        eye[0] += 2;
+    });
+
 }

@@ -1,13 +1,14 @@
-class Train {
+class Player {
 
-    constructor(gl, pos, depth)
+    constructor(gl, pos)
     {
-        this.speed = [0,0,-0.3];
+        this.speed = [0,0, 0.1];
+        this.gravity = [0, -0.01, 0];
         this.pos = pos;
         this.rotate = 0;
         this.rotationSpeed = 1;
 
-        this.texture = loadTexture(gl, 'trainKale.jpeg');
+        this.texture = loadTexture(gl, 'player.jpg');
 
         // Create a buffer for the cube's vertex positions.
 
@@ -19,11 +20,11 @@ class Train {
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       
         // Now create an array of positions for the cube.
-        var baseWidth = 0.75;
-        var baseDepth = depth;
-        var topWidth = 0.6;
-        var topDepth = depth - 2;
-        var height = 1;
+        var baseWidth = 0.25;
+        var baseDepth = 0.01;
+        var topWidth = 0.25;
+        var topDepth = 0.01;
+        var height = 0.4;
 
       
         const positions = [
@@ -325,9 +326,18 @@ class Train {
 
     tick(deltaTime)
     {
-        this.pos[0] += this.speed[0];
-        this.pos[1] += this.speed[1];
-        this.pos[2] += this.speed[2];
-        this.rotate = this.rotate + this.rotationSpeed*deltaTime
+        if(this.pos[1] < -2.5)
+        {
+            this.pos[1] = -2.5;
+            this.speed = [0,0, 0.1];
+            vec3.add(this.pos, this.pos, this.speed);
+        }
+        else
+        {
+            this.speed[1] += this.gravity[1];
+            vec3.add(this.pos, this.pos, this.speed);
+            console.log(this.position);
+            
+        }
     }
 }
