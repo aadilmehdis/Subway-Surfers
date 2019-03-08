@@ -6,6 +6,8 @@ var player;
 var policeman;
 var dog;
 var finishLine;
+
+var score = 0;
 // var sky = [];
 var tracks = [];
 var barricades = [];
@@ -245,9 +247,6 @@ function main() {
         tracks.push(new Track(gl, [0, -3, 10 * i]));
     }
 
-    for (var i = 0; i < 100; ++i) {
-        coins.push(new Coin(gl, [-2, 0, 5 * i]));
-    }
 
 
     for (var i = 0; i < 30; ++i) {
@@ -286,6 +285,20 @@ function main() {
 
     }
 
+    for (var i = 0; i < 260; ++i) {
+        var pos = [];
+        var lane = Math.floor(Math.random() * 3)
+        if (lane == 0) pos.push(0);
+        else if (lane == 1) pos.push(2);
+        else pos.push(-2);
+
+        pos.push(-2.6);
+
+        pos.push(5 * i);
+
+        coins.push(new Coin(gl, pos));
+    }
+
     // If we don't have a GL context, give up now
 
     if (!gl) {
@@ -305,7 +318,7 @@ function main() {
 
         tick(deltaTime);
         drawScene(gl, programInfo, deltaTime);
-        if(gameOver) return;
+        if (gameOver) return;
 
         requestAnimationFrame(render);
 
@@ -389,6 +402,17 @@ function tick(deltaTime) {
         trains[i].tick(deltaTime);
         if (eye[2] > trains[i].pos[2] + 20) {
             trains.splice(i, 1);
+        }
+    }
+
+    console.log(score)
+    for (var i = 0; i < coins.length; ++i) {
+
+        coins[i].tick(deltaTime);
+        if (intersect( player,coins[i])) {
+            coins.splice(i, 1);
+            score += 1;
+            console.log("lol" + score);
         }
     }
 
@@ -487,26 +511,21 @@ function tick(deltaTime) {
         }
     }
 
-    if(player.strike1)
-    {
-        if(!gameOver)
-        {
-            if(timer % 1000 == 0)
-            {
+    if (player.strike1) {
+        if (!gameOver) {
+            if (timer % 1000 == 0) {
                 policeman.pos[2] -= 1;
                 player.strike1 = false;
                 console.log("freed at last");
-                
+
             }
         }
     }
 
-    if(timer == 300)
-    {
+    if (timer == 300) {
         policeman.pos[2] -= 0.25;
     }
-    if(player.pos > 1300)
-    {
+    if (player.pos > 1300) {
         gameOver = true;
         gameWon = true;
     }
@@ -704,3 +723,4 @@ function intersect(a, b) {
         (a.minY <= b.maxY && a.maxY >= b.minY) &&
         (a.minZ <= b.maxZ && a.maxZ >= b.minZ);
 }
+

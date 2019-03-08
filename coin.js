@@ -16,27 +16,36 @@ class Coin {
 
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
+        var radius = 0.15;
+
+
+
+        this.minX = -radius + pos[0];
+        this.minY = -radius + pos[1];
+        this.minZ = -radius + pos[2]; 
+        this.maxX = +radius + pos[0];
+        this.maxY = +radius + pos[1];
+        this.maxZ = +radius + pos[2];
+
         var nSides = 20;
-        var radius = 0.25;
         var theta = (2 * Math.PI) / nSides;
         this.nSides = nSides;
 
         var positions = []
 
 
-        for(var i=0; i < nSides ;++i)
-        {
-            positions.push(0 + this.pos[0]);
-            positions.push(0  + this.pos[1]);
-            positions.push(0  + this.pos[2]);
+        for (var i = 0; i < nSides; ++i) {
+            positions.push(0);
+            positions.push(0);
+            positions.push(0);
 
-            positions.push(radius * Math.cos(theta* i)  + this.pos[0]);
-            positions.push(radius * Math.sin(theta* i)+ this.pos[1]);
-            positions.push(0+ this.pos[2]);
+            positions.push(radius * Math.cos(theta * i));
+            positions.push(radius * Math.sin(theta * i));
+            positions.push(0);
 
-            positions.push(radius * Math.cos(theta* (i+1) )  + this.pos[0]);
-            positions.push(radius * Math.sin(theta* (i+1) )+ this.pos[1]);
-            positions.push(0+ this.pos[2]);
+            positions.push(radius * Math.cos(theta * (i + 1)));
+            positions.push(radius * Math.sin(theta * (i + 1)));
+            positions.push(0);
 
         }
 
@@ -53,8 +62,7 @@ class Coin {
 
         var vertexNormals = []
 
-        for(var i = 0 ; i<3*nSides ; ++i)
-        {
+        for (var i = 0; i < 3 * nSides; ++i) {
             vertexNormals.push(0.0)
             vertexNormals.push(0.0)
             vertexNormals.push(-1.0)
@@ -70,8 +78,7 @@ class Coin {
 
         var textureCoordinates = []
 
-        for(var i = 0 ;i<nSides;++i)
-        {
+        for (var i = 0; i < nSides; ++i) {
             textureCoordinates.push(0.0, 0.0);
             textureCoordinates.push(0.5, 0.0);
             textureCoordinates.push(0.5, 0.5);
@@ -93,8 +100,7 @@ class Coin {
         var indices = []
 
 
-        for(var i=0; i < positions.length / 3 ; ++i)
-        {
+        for (var i = 0; i < positions.length / 3; ++i) {
             indices.push(i);
         }
 
@@ -252,7 +258,7 @@ class Coin {
         gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
         {
-            const vertexCount = 3*this.nSides;
+            const vertexCount = 3 * this.nSides;
             const type = gl.UNSIGNED_SHORT;
             const offset = 0;
             gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
