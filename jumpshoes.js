@@ -1,8 +1,7 @@
 class JumpShoes {
 
-    constructor(gl, pos)
-    {
-        this.speed = [0,0,-0.3];
+    constructor(gl, pos) {
+        this.speed = [0, 0, -0.3];
         this.pos = pos;
         this.rotate = 0;
         this.rotationSpeed = 0.05;
@@ -15,9 +14,9 @@ class JumpShoes {
 
         // Select the positionBuffer as the one to apply buffer
         // operations to from here out.
-      
+
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      
+
         // Now create an array of positions for the cube.
         var baseWidth = 0.15;
         var baseDepth = 0.15;
@@ -25,168 +24,176 @@ class JumpShoes {
         var topDepth = 0.15;
         var height = 0.15;
 
-      
+
+        this.minX = -baseWidth + pos[0];
+        this.minY = -height + pos[1];
+        this.minZ = -baseDepth + pos[2]; 
+        this.maxX = +topWidth + pos[0];
+        this.maxY = +height + pos[1];
+        this.maxZ = +topDepth + pos[2];
+
+
         const positions = [
-          // Front face
-          -baseWidth, -height,  baseDepth,
-           baseWidth, -height,  baseDepth,
-           topWidth,  height,  topDepth,
-          -topWidth,  height,  topDepth,
-      
-          // Back face
-          -baseWidth, -height, -baseDepth,
-          -topWidth,  height, -topDepth,
-           topWidth,  height, -topDepth,
-           baseWidth, -height, -baseDepth,
-      
-          // Top face
-          -topWidth,  height, -topDepth,
-           topWidth,  height, -topDepth,
-           topWidth,  height,  topDepth,
-          -topWidth,  height,  topDepth,
-      
-          // Bottom face
-          -baseWidth, -height, -baseDepth,
-           baseWidth, -height, -baseDepth,
-           baseWidth, -height,  baseDepth,
-          -baseWidth, -height,  baseDepth,
-      
-          // Right face
-           baseWidth, -height, -baseDepth,
-           topWidth,  height, -topDepth,
-           topWidth,  height,  topDepth,
-           baseWidth, -height,  baseDepth,
-      
-          // Left face
-          -baseWidth, -height, -baseDepth,
-          -baseWidth, -height,  baseDepth,
-          -topWidth,  height,  topDepth,
-          -topWidth,  height, -topDepth,
+            // Front face
+            -baseWidth, -height, baseDepth,
+            baseWidth, -height, baseDepth,
+            topWidth, height, topDepth,
+            -topWidth, height, topDepth,
+
+            // Back face
+            -baseWidth, -height, -baseDepth,
+            -topWidth, height, -topDepth,
+            topWidth, height, -topDepth,
+            baseWidth, -height, -baseDepth,
+
+            // Top face
+            -topWidth, height, -topDepth,
+            topWidth, height, -topDepth,
+            topWidth, height, topDepth,
+            -topWidth, height, topDepth,
+
+            // Bottom face
+            -baseWidth, -height, -baseDepth,
+            baseWidth, -height, -baseDepth,
+            baseWidth, -height, baseDepth,
+            -baseWidth, -height, baseDepth,
+
+            // Right face
+            baseWidth, -height, -baseDepth,
+            topWidth, height, -topDepth,
+            topWidth, height, topDepth,
+            baseWidth, -height, baseDepth,
+
+            // Left face
+            -baseWidth, -height, -baseDepth,
+            -baseWidth, -height, baseDepth,
+            -topWidth, height, topDepth,
+            -topWidth, height, -topDepth,
         ];
         // Now pass the list of positions into WebGL to build the
         // shape. We do this by creating a Float32Array from the
         // JavaScript array, then use it to fill the current buffer.
-      
+
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-      
+
         // Set up the normals for the vertices, so that we can compute lighting.
-      
+
         const normalBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-      
+
         const vertexNormals = [
-          // Front
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
-      
-          // Back
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
-      
-          // Top
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
-      
-          // Bottom
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
-      
-          // Right
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
-      
-          // Left
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
+            // Front
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Back
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Top
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Bottom
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Right
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Left
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
 
         ];
-      
+
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals),
-                      gl.STATIC_DRAW);
-      
+            gl.STATIC_DRAW);
+
         // Now set up the texture coordinates for the faces.
-      
+
         const textureCoordBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
-      
+
         const textureCoordinates = [
-          // Front
-          1.0,  1.0,
-          0.0,  1.0,
-          0.0,  0.0,
-          1.0,  0.0,
-          // Back
-          0.0,  1.0,
-          0.0,  0.0,
-          1.0,  0.0,
-          1.0,  1.0,
-          // Top
-          0.0,  0.0,
-          1.0,  0.0,
-          1.0,  1.0,
-          0.0,  1.0,
-          // Bottom
-          0.0,  0.0,
-          1.0,  0.0,
-          1.0,  1.0,
-          0.0,  1.0,
-          // Right
-          0.0,  1.0,
-          0.0,  0.0,
-          1.0,  0.0,
-          1.0,  1.0,
-          // Left
-          1.0,  1.0,
-          0.0,  1.0,
-          0.0,  0.0,
-          1.0,  0.0,
+            // Front
+            1.0, 1.0,
+            0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
+            // Back
+            0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            // Top
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Bottom
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Right
+            0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            // Left
+            1.0, 1.0,
+            0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
 
         ];
-      
+
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
-                      gl.STATIC_DRAW);
-      
+            gl.STATIC_DRAW);
+
         // Build the element array buffer; this specifies the indices
         // into the vertex arrays for each face's vertices.
-      
+
         const indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-      
+
         // This array defines each face as two triangles, using the
         // indices into the vertex array to specify each triangle's
         // position.
-      
+
         const indices = [
-          0,  1,  2,      0,  2,  3,    // front
-          4,  5,  6,      4,  6,  7,    // back
-          8,  9,  10,     8,  10, 11,   // top
-          12, 13, 14,     12, 14, 15,   // bottom
-          16, 17, 18,     16, 18, 19,   // right
-          20, 21, 22,     20, 22, 23,   // left
+            0, 1, 2, 0, 2, 3, // front
+            4, 5, 6, 4, 6, 7, // back
+            8, 9, 10, 8, 10, 11, // top
+            12, 13, 14, 12, 14, 15, // bottom
+            16, 17, 18, 16, 18, 19, // right
+            20, 21, 22, 20, 22, 23, // left
         ];
-      
+
         // Now send the element array to GL
-      
+
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
             new Uint16Array(indices), gl.STATIC_DRAW);
-      
+
         this.buffer = {
-          position: positionBuffer,
-          normal: normalBuffer,
-          textureCoord: textureCoordBuffer,
-          indices: indexBuffer,
+            position: positionBuffer,
+            normal: normalBuffer,
+            textureCoord: textureCoordBuffer,
+            indices: indexBuffer,
         };
     }
 
@@ -209,10 +216,10 @@ class JumpShoes {
         //               [0, 0, 1]);       // axis to rotate around (Z)
 
 
-        mat4.rotate(modelMatrix,  // destination matrix
-                        modelMatrix,  // matrix to rotate
-                        this.rotate,     // amount to rotate in radians
-                        [0, 1, 0]);       // axis to rotate around (Z)
+        mat4.rotate(modelMatrix, // destination matrix
+            modelMatrix, // matrix to rotate
+            this.rotate, // amount to rotate in radians
+            [0, 1, 0]); // axis to rotate around (Z)
 
 
         const modelViewMatrix = mat4.create();
@@ -324,9 +331,7 @@ class JumpShoes {
         }
     }
 
-    tick(deltaTime)
-    {
-        this.rotate += this.rotationSpeed;
-        ;
+    tick(deltaTime) {
+        this.rotate += this.rotationSpeed;;
     }
 }

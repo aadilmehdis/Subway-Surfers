@@ -288,7 +288,6 @@ class Tree {
 
 
     drawObject(gl, viewMatrix, projectionMatrix, programInfo) {
-        console.log("lel");
 
         // Set the drawing position to the "identity" point, which is
         // the center of the scene.

@@ -1,10 +1,10 @@
 var eye = [0, -1.6, 0];
-var target = [0,0,2000];
+var target = [0, 0, 2000];
 var up = [0, 1, 0];
 
 var t;
 var player;
-var sky = [];
+// var sky = [];
 var tracks = [];
 var barricades = [];
 var pavement = [];
@@ -13,15 +13,17 @@ var crates = [];
 var jetpacks = [];
 var jumpshoes = [];
 var walls = [];
+var hurdles = [];
+
 var timer = 0;
 
 const canvas = document.querySelector('#glcanvas');
 const gl = canvas.getContext('webgl');
 var gray = false;
 
-  // Vertex shader program
+// Vertex shader program
 
-  const vsSource = `
+const vsSource = `
     attribute vec4 aVertexPosition;
     attribute vec3 aVertexNormal;
     attribute vec2 aTextureCoord;
@@ -43,7 +45,7 @@ var gray = false;
     }
   `;
 
-  const vsSourceFlash = `
+const vsSourceFlash = `
   attribute vec4 aVertexPosition;
   attribute vec3 aVertexNormal;
   attribute vec2 aTextureCoord;
@@ -64,9 +66,9 @@ var gray = false;
     vLighting = ambientLight + (directionalLightColor * directional);
   }
 `;
-  // Fragment shader program
+// Fragment shader program
 
-  const fsSource = `
+const fsSource = `
     varying highp vec2 vTextureCoord;
     varying highp vec3 vLighting;
 
@@ -79,7 +81,7 @@ var gray = false;
     }
   `;
 
-  const fsSourceGray = `
+const fsSourceGray = `
     varying highp vec2 vTextureCoord;
     varying highp vec3 vLighting;
     uniform sampler2D uSampler;
@@ -99,89 +101,88 @@ var gray = false;
     }
   `;
 
-  // Initialize a shader program; this is where all the lighting
-  // for the vertices and so forth is established.
-  const shaderProgramNormal = initShaderProgram(gl, vsSource, fsSource);
-  const shaderProgramGray = initShaderProgram(gl, vsSource, fsSourceGray);
-  const shaderProgramGrayFlash = initShaderProgram(gl, vsSourceFlash, fsSourceGray);
-  const shaderProgramNormalFlash = initShaderProgram(gl, vsSourceFlash, fsSource);
+// Initialize a shader program; this is where all the lighting
+// for the vertices and so forth is established.
+const shaderProgramNormal = initShaderProgram(gl, vsSource, fsSource);
+const shaderProgramGray = initShaderProgram(gl, vsSource, fsSourceGray);
+const shaderProgramGrayFlash = initShaderProgram(gl, vsSourceFlash, fsSourceGray);
+const shaderProgramNormalFlash = initShaderProgram(gl, vsSourceFlash, fsSource);
 
 
-  // Collect all the info needed to use the shader program.
-  // Look up which attributes our shader program is using
-  // for aVertexPosition, aVertexNormal, aTextureCoord,
-  // and look up uniform locations.
-  const programInfoNormal = {
+// Collect all the info needed to use the shader program.
+// Look up which attributes our shader program is using
+// for aVertexPosition, aVertexNormal, aTextureCoord,
+// and look up uniform locations.
+const programInfoNormal = {
     program: shaderProgramNormal,
     attribLocations: {
-      vertexPosition: gl.getAttribLocation(shaderProgramNormal, 'aVertexPosition'),
-      vertexNormal: gl.getAttribLocation(shaderProgramNormal, 'aVertexNormal'),
-      textureCoord: gl.getAttribLocation(shaderProgramNormal, 'aTextureCoord'),
+        vertexPosition: gl.getAttribLocation(shaderProgramNormal, 'aVertexPosition'),
+        vertexNormal: gl.getAttribLocation(shaderProgramNormal, 'aVertexNormal'),
+        textureCoord: gl.getAttribLocation(shaderProgramNormal, 'aTextureCoord'),
     },
     uniformLocations: {
-      projectionMatrix: gl.getUniformLocation(shaderProgramNormal, 'uProjectionMatrix'),
-      modelViewMatrix: gl.getUniformLocation(shaderProgramNormal, 'uModelViewMatrix'),
-      normalMatrix: gl.getUniformLocation(shaderProgramNormal, 'uNormalMatrix'),
-      uSampler: gl.getUniformLocation(shaderProgramNormal, 'uSampler'),
+        projectionMatrix: gl.getUniformLocation(shaderProgramNormal, 'uProjectionMatrix'),
+        modelViewMatrix: gl.getUniformLocation(shaderProgramNormal, 'uModelViewMatrix'),
+        normalMatrix: gl.getUniformLocation(shaderProgramNormal, 'uNormalMatrix'),
+        uSampler: gl.getUniformLocation(shaderProgramNormal, 'uSampler'),
     },
-  };
+};
 
-  const programInfoGray = {
+const programInfoGray = {
     program: shaderProgramGray,
     attribLocations: {
-      vertexPosition: gl.getAttribLocation(shaderProgramGray, 'aVertexPosition'),
-      vertexNormal: gl.getAttribLocation(shaderProgramGray, 'aVertexNormal'),
-      textureCoord: gl.getAttribLocation(shaderProgramGray, 'aTextureCoord'),
+        vertexPosition: gl.getAttribLocation(shaderProgramGray, 'aVertexPosition'),
+        vertexNormal: gl.getAttribLocation(shaderProgramGray, 'aVertexNormal'),
+        textureCoord: gl.getAttribLocation(shaderProgramGray, 'aTextureCoord'),
     },
     uniformLocations: {
-      projectionMatrix: gl.getUniformLocation(shaderProgramGray, 'uProjectionMatrix'),
-      modelViewMatrix: gl.getUniformLocation(shaderProgramGray, 'uModelViewMatrix'),
-      normalMatrix: gl.getUniformLocation(shaderProgramGray, 'uNormalMatrix'),
-      uSampler: gl.getUniformLocation(shaderProgramGray, 'uSampler'),
+        projectionMatrix: gl.getUniformLocation(shaderProgramGray, 'uProjectionMatrix'),
+        modelViewMatrix: gl.getUniformLocation(shaderProgramGray, 'uModelViewMatrix'),
+        normalMatrix: gl.getUniformLocation(shaderProgramGray, 'uNormalMatrix'),
+        uSampler: gl.getUniformLocation(shaderProgramGray, 'uSampler'),
     },
-  };
+};
 
-  const programInfoNormalFlash = {
+const programInfoNormalFlash = {
     program: shaderProgramNormalFlash,
     attribLocations: {
-      vertexPosition: gl.getAttribLocation(shaderProgramNormalFlash, 'aVertexPosition'),
-      vertexNormal: gl.getAttribLocation(shaderProgramNormalFlash, 'aVertexNormal'),
-      textureCoord: gl.getAttribLocation(shaderProgramNormalFlash, 'aTextureCoord'),
+        vertexPosition: gl.getAttribLocation(shaderProgramNormalFlash, 'aVertexPosition'),
+        vertexNormal: gl.getAttribLocation(shaderProgramNormalFlash, 'aVertexNormal'),
+        textureCoord: gl.getAttribLocation(shaderProgramNormalFlash, 'aTextureCoord'),
     },
     uniformLocations: {
-      projectionMatrix: gl.getUniformLocation(shaderProgramNormalFlash, 'uProjectionMatrix'),
-      modelViewMatrix: gl.getUniformLocation(shaderProgramNormalFlash, 'uModelViewMatrix'),
-      normalMatrix: gl.getUniformLocation(shaderProgramNormalFlash, 'uNormalMatrix'),
-      uSampler: gl.getUniformLocation(shaderProgramNormalFlash, 'uSampler'),
+        projectionMatrix: gl.getUniformLocation(shaderProgramNormalFlash, 'uProjectionMatrix'),
+        modelViewMatrix: gl.getUniformLocation(shaderProgramNormalFlash, 'uModelViewMatrix'),
+        normalMatrix: gl.getUniformLocation(shaderProgramNormalFlash, 'uNormalMatrix'),
+        uSampler: gl.getUniformLocation(shaderProgramNormalFlash, 'uSampler'),
     },
-  };
+};
 
-  const programInfoGrayFlash = {
+const programInfoGrayFlash = {
     program: shaderProgramGrayFlash,
     attribLocations: {
-      vertexPosition: gl.getAttribLocation(shaderProgramGrayFlash, 'aVertexPosition'),
-      vertexNormal: gl.getAttribLocation(shaderProgramGrayFlash, 'aVertexNormal'),
-      textureCoord: gl.getAttribLocation(shaderProgramGrayFlash, 'aTextureCoord'),
+        vertexPosition: gl.getAttribLocation(shaderProgramGrayFlash, 'aVertexPosition'),
+        vertexNormal: gl.getAttribLocation(shaderProgramGrayFlash, 'aVertexNormal'),
+        textureCoord: gl.getAttribLocation(shaderProgramGrayFlash, 'aTextureCoord'),
     },
     uniformLocations: {
-      projectionMatrix: gl.getUniformLocation(shaderProgramGrayFlash, 'uProjectionMatrix'),
-      modelViewMatrix: gl.getUniformLocation(shaderProgramGrayFlash, 'uModelViewMatrix'),
-      normalMatrix: gl.getUniformLocation(shaderProgramGrayFlash, 'uNormalMatrix'),
-      uSampler: gl.getUniformLocation(shaderProgramGrayFlash, 'uSampler'),
+        projectionMatrix: gl.getUniformLocation(shaderProgramGrayFlash, 'uProjectionMatrix'),
+        modelViewMatrix: gl.getUniformLocation(shaderProgramGrayFlash, 'uModelViewMatrix'),
+        normalMatrix: gl.getUniformLocation(shaderProgramGrayFlash, 'uNormalMatrix'),
+        uSampler: gl.getUniformLocation(shaderProgramGrayFlash, 'uSampler'),
     },
-  };
+};
 
 
-  programInfo =  programInfoNormal;
+programInfo = programInfoNormal;
 
-  Mousetrap.bind('g', function() {
-    if(programInfo == programInfoNormal)
-    {
+Mousetrap.bind('g', function () {
+    if (programInfo == programInfoNormal) {
+        document.getElementById("glcanvas").style = "background: url('skygray.jpeg'); background-size: cover; background-repeat: no-repeat";
         programInfo = programInfoGray;
         gray = true;
-    }
-    else
-    {
+    } else {
+        document.getElementById("glcanvas").style = "background: url('sky.jpeg'); background-size: cover; background-repeat: no-repeat";
         programInfo = programInfoNormal;
         gray = false;
     }
@@ -197,83 +198,100 @@ main();
 //
 function main() {
 
-  t = new Train(gl, [0,-2,100], 10);
-  player = new Player(gl, [0,-2.5,7]);
+    t = new Train(gl, [0, -2, 100], 10);
+    player = new Player(gl, [0, -2.5, 7]);
 
-  keyBindings();
+    keyBindings();
 
-  for(var i=0 ;i< 10;++i)
-  {
-      jetpacks.push(new JetPack(gl, [1,0,20*i]));
-      jumpshoes.push(new JumpShoes(gl, [-1,0,20*i+2]));
-  }
+    for (var i = 0; i < 10; ++i) {
+        jetpacks.push(new JetPack(gl, [2, -2.7, 20 * i]));
+        jumpshoes.push(new JumpShoes(gl, [-2, -2.7, 20 * i + 2]));
+    }
 
-  for(var i=0 ;i < 40;++i)
-  {
-      walls.push(new Wall(gl,[6,0.6,+50*i]))
-      walls.push(new Wall(gl,[-6,0.6,+50*i]))
-  }
+    for (var i = 0; i < 20; ++i) {
+        // hurdles.push(new Hurdle(gl, [0, , +50 * i]));
+        var pos = [];
+        lane = Math.floor(Math.random() * 3)
+        if (lane == 0) pos.push(0);
+        else if (lane == 1) pos.push(2);
+        else pos.push(-2);
 
-  for(var i=0 ;i< 100;++i)
-  {
-      tracks.push(new Track(gl, [0,-3,10*i]));
-  }
-  for(var i=0 ;i< 40;++i)
-  {
-    crates.push(new Crate(gl, [0,2,+50*i]));
-  }
-  for(var i=0 ;i < 40;++i)
-  {
-      pavement.push(new Pavement(gl, [0,-3.3,+50*i]));
-      sky.push(new Sky(gl, [0, 4,+50*i]));
-  }
-  for(var i=0 ;i< 40;++i)
-  {
-      trees.push(new Tree(gl, [3.9,0,+20*i], 0.25));
-      trees.push(new Tree(gl, [-3.9,0,+20*i], 0.25));
-  }
-  for(var i=0 ;i< 5;++i)
-  {
-      var pos = [];
-      lane = Math.floor(Math.random() * 3)
-      if(lane == 0) pos.push(0);
-      else if(lane == 1) pos.push(1.75);
-      else pos.push(-2);
+        pos.push(-1.65);
 
-      pos.push(-2.5);
+        pos.push(50 * i);
 
-      pos.push(eye[2] + 20*i);
+        hurdles.push(new Hurdle(gl, pos));
+    }
 
-      barricades.push(new Barricade(gl, pos));
+    for (var i = 0; i < 40; ++i) {
+        walls.push(new Wall(gl, [6, 0.6, +50 * i]))
+        walls.push(new Wall(gl, [-6, 0.6, +50 * i]))
+    }
 
-  }
+    for (var i = 0; i < 100; ++i) {
+        tracks.push(new Track(gl, [0, -3, 10 * i]));
+    }
+    for (var i = 0; i < 40; ++i) {
+        var pos = [];
+        lane = Math.floor(Math.random() * 3)
+        if (lane == 0) pos.push(0);
+        else if (lane == 1) pos.push(2);
+        else pos.push(-2);
 
-  // If we don't have a GL context, give up now
+        pos.push(-2.5);
 
-  if (!gl) {
-    alert('Unable to initialize WebGL. Your browser or machine may not support it.');
-    return;
-  }
+        pos.push(30 * i);
+
+        crates.push(new Crate(gl, pos));
+    }
+    for (var i = 0; i < 40; ++i) {
+        pavement.push(new Pavement(gl, [0, -3.3, +50 * i]));
+        //   sky.push(new Sky(gl, [0, 4,+50*i]));
+    }
+    for (var i = 0; i < 40; ++i) {
+        trees.push(new Tree(gl, [3.9, 0, +20 * i], 0.25));
+        trees.push(new Tree(gl, [-3.9, 0, +20 * i], 0.25));
+    }
+    for (var i = 0; i < 5; ++i) {
+        var pos = [];
+        lane = Math.floor(Math.random() * 3)
+        if (lane == 0) pos.push(0);
+        else if (lane == 1) pos.push(1.75);
+        else pos.push(-2);
+
+        pos.push(-2.5);
+
+        pos.push(eye[2] + 20 * i);
+
+        barricades.push(new Barricade(gl, pos));
+
+    }
+
+    // If we don't have a GL context, give up now
+
+    if (!gl) {
+        alert('Unable to initialize WebGL. Your browser or machine may not support it.');
+        return;
+    }
 
 
-  var then = 0;
+    var then = 0;
 
-  // Draw the scene repeatedly
-  function render(now) {
-      console.log(eye);
-    timer++;
-    now *= 0.001;  // convert to seconds
-    const deltaTime = now - then;
-    then = now;
+    // Draw the scene repeatedly
+    function render(now) {
+        timer++;
+        now *= 0.001; // convert to seconds
+        const deltaTime = now - then;
+        then = now;
 
-    tick(deltaTime);
-    drawScene(gl, programInfo, deltaTime);
+        tick(deltaTime);
+        drawScene(gl, programInfo, deltaTime);
 
+        requestAnimationFrame(render);
+
+
+    }
     requestAnimationFrame(render);
-
-
-  }
-  requestAnimationFrame(render);
 }
 
 
@@ -282,138 +300,132 @@ function main() {
 // When the image finished loading copy it into the texture.
 //
 function loadTexture(gl, url) {
-  const texture = gl.createTexture();
-  gl.bindTexture(gl.TEXTURE_2D, texture);
-
-  // Because images have to be download over the internet
-  // they might take a moment until they are ready.
-  // Until then put a single pixel in the texture so we can
-  // use it immediately. When the image has finished downloading
-  // we'll update the texture with the contents of the image.
-  const level = 0;
-  const internalFormat = gl.RGBA;
-  const width = 1;
-  const height = 1;
-  const border = 0;
-  const srcFormat = gl.RGBA;
-  const srcType = gl.UNSIGNED_BYTE;
-  const pixel = new Uint8Array([0, 0, 255, 255]);  // opaque blue
-  gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
-                width, height, border, srcFormat, srcType,
-                pixel);
-
-  const image = new Image();
-  image.onload = function() {
+    const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
+
+    // Because images have to be download over the internet
+    // they might take a moment until they are ready.
+    // Until then put a single pixel in the texture so we can
+    // use it immediately. When the image has finished downloading
+    // we'll update the texture with the contents of the image.
+    const level = 0;
+    const internalFormat = gl.RGBA;
+    const width = 1;
+    const height = 1;
+    const border = 0;
+    const srcFormat = gl.RGBA;
+    const srcType = gl.UNSIGNED_BYTE;
+    const pixel = new Uint8Array([0, 0, 255, 255]); // opaque blue
     gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
-                  srcFormat, srcType, image);
+        width, height, border, srcFormat, srcType,
+        pixel);
 
-    // WebGL1 has different requirements for power of 2 images
-    // vs non power of 2 images so check if the image is a
-    // power of 2 in both dimensions.
-    if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
-       // Yes, it's a power of 2. Generate mips.
-       gl.generateMipmap(gl.TEXTURE_2D);
-    } else {
-       // No, it's not a power of 2. Turn of mips and set
-       // wrapping to clamp to edge
-       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-       gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    const image = new Image();
+    image.onload = function () {
+        gl.bindTexture(gl.TEXTURE_2D, texture);
+        gl.texImage2D(gl.TEXTURE_2D, level, internalFormat,
+            srcFormat, srcType, image);
 
-    }
-  };
-  image.src = url;
+        // WebGL1 has different requirements for power of 2 images
+        // vs non power of 2 images so check if the image is a
+        // power of 2 in both dimensions.
+        if (isPowerOf2(image.width) && isPowerOf2(image.height)) {
+            // Yes, it's a power of 2. Generate mips.
+            gl.generateMipmap(gl.TEXTURE_2D);
+        } else {
+            // No, it's not a power of 2. Turn of mips and set
+            // wrapping to clamp to edge
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+            gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
 
-  return texture;
+        }
+    };
+    image.src = url;
+
+    return texture;
 }
 
 function isPowerOf2(value) {
-  return (value & (value - 1)) == 0;
+    return (value & (value - 1)) == 0;
 }
 
 
 
-function tick(deltaTime)
-{
-    eye[2] += 0.1;
+function tick(deltaTime) {
+    eye[2] += 0.15;
     eye[1] = player.pos[1] + 1;
     eye[0] = player.pos[0];
 
     t.tick(deltaTime);
     player.tick(deltaTime);
-    // for(var i=0;i<jetpacks.length; ++i)
-    // {
-    //     jetpacks[i].tick();
-    // }
-    // for(var i=0;i<jumpshoes.length; ++i)
-    // {
-    //     jumpshoes[i].tick();
-    // }
 
-    for(var i = 0 ; i< sky.length ; ++i)
-    {
-        if(eye[2] > sky[i].pos[2] + 20)
-        {
-            sky.splice(i, 1);
-        }
-    }
-    for(var i = 0 ; i< tracks.length ; ++i)
-    {
-        if(eye[2] > tracks[i].pos[2] + 20)
-        {
+    for (var i = 0; i < tracks.length; ++i) {
+        if (eye[2] > tracks[i].pos[2] + 20) {
             tracks.splice(i, 1);
         }
     }
-    for(var i = 0 ; i< barricades.length ; ++i)
-    {
-        if(eye[2] > barricades[i].pos[2] + 20)
-        {
+
+    for (var i = 0; i < barricades.length; ++i) {
+        if (intersect(player, barricades[i])) {
+            console.log(" barricade");
+        }
+        if (eye[2] > barricades[i].pos[2] + 20) {
             barricades.splice(i, 1);
         }
     }
-    for(var i = 0 ; i< pavement.length ; ++i)
-    {
-        if(eye[2] > pavement[i].pos[2] + 20)
-        {
+    for (var i = 0; i < pavement.length; ++i) {
+        if (eye[2] > pavement[i].pos[2] + 20) {
             pavement.splice(i, 1);
         }
     }
-    for(var i = 0 ; i< trees.length ; ++i)
-    {
-        if(eye[2] > trees[i].pos[2] + 20)
-        {
+    for (var i = 0; i < trees.length; ++i) {
+        if (eye[2] > trees[i].pos[2] + 20) {
             trees.splice(i, 1);
         }
     }
-    for(var i = 0 ; i< crates.length ; ++i)
-    {
-        if(eye[2] > crates[i].pos[2] + 20)
-        {
+    for (var i = 0; i < crates.length; ++i) {
+        if (intersect(player, crates[i])) {
+            console.log(" crate");
+        }
+        if (eye[2] > crates[i].pos[2] + 20) {
             crates.splice(i, 1);
         }
     }
-    for(var i = 0 ; i< jetpacks.length ; ++i)
-    {
-        jetpacks[i].tick();
-        if(eye[2] > jetpacks[i].pos[2] + 20)
-        {
+    for (var i = 0; i < jetpacks.length; ++i) {
+        if (intersect(player, jetpacks[i])) {
             jetpacks.splice(i, 1);
+            player.jetPack = true;
+        } else {
+
+            jetpacks[i].tick();
+            if (eye[2] > jetpacks[i].pos[2] + 20) {
+                jetpacks.splice(i, 1);
+            }
         }
     }
-    for(var i = 0 ; i< jumpshoes.length ; ++i)
-    {
-        jumpshoes[i].tick();
-        if(eye[2] > jumpshoes[i].pos[2] + 20)
-        {
+    for (var i = 0; i < jumpshoes.length; ++i) {
+        if (intersect(player, jumpshoes[i])) {
             jumpshoes.splice(i, 1);
+            player.superJump = true;
+        } else {
+            jumpshoes[i].tick();
+            if (eye[2] > jumpshoes[i].pos[2] + 20) {
+                jumpshoes.splice(i, 1);
+            }
         }
     }
-    for(var i = 0 ; i< walls.length ; ++i)
-    {
-        if(eye[2] > walls[i].pos[2] + 20)
-        {
+    for (var i = 0; i < walls.length; ++i) {
+        if (eye[2] > walls[i].pos[2] + 20) {
             walls.splice(i, 1);
+        }
+    }
+    for (var i = 0; i < hurdles.length; ++i) {
+        if (intersect(player, hurdles[i])) {
+            console.log(" hurdle");
+        }
+        if (eye[2] > hurdles[i].pos[2] + 20) {
+            hurdles.splice(i, 1);
         }
     }
 }
@@ -422,35 +434,35 @@ function tick(deltaTime)
 // Draw the scene.
 //
 function drawScene(gl, programInfo, deltaTime) {
-  gl.clearColor(0.0, 0.0, 0.0, 0.0);  // Clear to black, fully opaque
-  gl.clearDepth(1.0);                 // Clear everything
-  gl.enable(gl.DEPTH_TEST);           // Enable depth testing
-  gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
+    gl.clearColor(0.0, 0.0, 0.0, 0.0); // Clear to black, fully opaque
+    gl.clearDepth(1.0); // Clear everything
+    gl.enable(gl.DEPTH_TEST); // Enable depth testing
+    gl.depthFunc(gl.LEQUAL); // Near things obscure far things
 
-  // Clear the canvas before we start drawing on it.
+    // Clear the canvas before we start drawing on it.
 
-  gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-  // Create a perspective matrix, a special matrix that is
-  // used to simulate the distortion of perspective in a camera.
-  // Our field of view is 45 degrees, with a width/height
-  // ratio that matches the display size of the canvas
-  // and we only want to see objects between 0.1 units
-  // and 100 units away from the camera.
+    // Create a perspective matrix, a special matrix that is
+    // used to simulate the distortion of perspective in a camera.
+    // Our field of view is 45 degrees, with a width/height
+    // ratio that matches the display size of the canvas
+    // and we only want to see objects between 0.1 units
+    // and 100 units away from the camera.
 
-  const fieldOfView = 45 * Math.PI / 180;   // in radians
-  const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
-  const zNear = 0.1;
-  const zFar = 100.0;
-  const projectionMatrix = mat4.create();
+    const fieldOfView = 45 * Math.PI / 180; // in radians
+    const aspect = gl.canvas.clientWidth / gl.canvas.clientHeight;
+    const zNear = 0.1;
+    const zFar = 100.0;
+    const projectionMatrix = mat4.create();
 
-  // note: glmatrix.js always has the first argument
-  // as the destination to receive the result.
-  mat4.perspective(projectionMatrix,
-                   fieldOfView,
-                   aspect,
-                   zNear,
-                   zFar);
+    // note: glmatrix.js always has the first argument
+    // as the destination to receive the result.
+    mat4.perspective(projectionMatrix,
+        fieldOfView,
+        aspect,
+        zNear,
+        zFar);
 
     var viewMatrix = mat4.create();
 
@@ -459,65 +471,51 @@ function drawScene(gl, programInfo, deltaTime) {
     t.drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     player.drawObject(gl, viewMatrix, projectionMatrix, programInfo);
 
-    for(var i=0;i<tracks.length;++i)
-    {
+    for (var i = 0; i < tracks.length; ++i) {
         tracks[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
-    for(var i=0;i<barricades.length;++i)
-    {
+    for (var i = 0; i < barricades.length; ++i) {
         barricades[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
-    for(var i=0;i<pavement.length;++i)
-    {
+    for (var i = 0; i < pavement.length; ++i) {
         pavement[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
-    for(var i=0;i<sky.length;++i)
-    {
-        sky[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
-    }
-    for(var i=0;i<crates.length;++i)
-    {
+    // for(var i=0;i<sky.length;++i)
+    // {
+    //     sky[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    // }
+    for (var i = 0; i < crates.length; ++i) {
         crates[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
-    for(var i=0;i<trees.length;++i)
-    {
+    for (var i = 0; i < trees.length; ++i) {
         trees[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
-    for(var i=0;i<jumpshoes.length;++i)
-    {
+    for (var i = 0; i < jumpshoes.length; ++i) {
         jumpshoes[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
-    for(var i=0;i<jetpacks.length;++i)
-    {
+    for (var i = 0; i < jetpacks.length; ++i) {
         jetpacks[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
+    for (var i = 0; i < hurdles.length; ++i) {
+        hurdles[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    }
 
-    var flash = (timer%100 <= 5)
-    for(var i=0;i<walls.length;++i)
-    {
-        if(flash)
-        {
-            if(gray)
-            {
+    var flash = (timer % 100 <= 5)
+    for (var i = 0; i < walls.length; ++i) {
+        if (flash) {
+            if (gray) {
                 walls[i].drawObject(gl, viewMatrix, projectionMatrix, programInfoGrayFlash);
-            }
-            else
-            {
+            } else {
                 walls[i].drawObject(gl, viewMatrix, projectionMatrix, programInfoNormalFlash);
             }
-        }
-        else
-        {
-            if(gray)
-            {
+        } else {
+            if (gray) {
                 walls[i].drawObject(gl, viewMatrix, projectionMatrix, programInfoGray);
-            }
-            else
-            {
+            } else {
                 walls[i].drawObject(gl, viewMatrix, projectionMatrix, programInfoNormal);
             }
         }
-        
+
     }
 }
 
@@ -525,24 +523,24 @@ function drawScene(gl, programInfo, deltaTime) {
 // Initialize a shader program, so WebGL knows how to draw our data
 //
 function initShaderProgram(gl, vsSource, fsSource) {
-  const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
-  const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+    const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+    const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
 
-  // Create the shader program
+    // Create the shader program
 
-  const shaderProgram = gl.createProgram();
-  gl.attachShader(shaderProgram, vertexShader);
-  gl.attachShader(shaderProgram, fragmentShader);
-  gl.linkProgram(shaderProgram);
+    const shaderProgram = gl.createProgram();
+    gl.attachShader(shaderProgram, vertexShader);
+    gl.attachShader(shaderProgram, fragmentShader);
+    gl.linkProgram(shaderProgram);
 
-  // If creating the shader program failed, alert
+    // If creating the shader program failed, alert
 
-  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
-    alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
-    return null;
-  }
+    if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) {
+        alert('Unable to initialize the shader program: ' + gl.getProgramInfoLog(shaderProgram));
+        return null;
+    }
 
-  return shaderProgram;
+    return shaderProgram;
 }
 
 //
@@ -550,55 +548,68 @@ function initShaderProgram(gl, vsSource, fsSource) {
 // compiles it.
 //
 function loadShader(gl, type, source) {
-  const shader = gl.createShader(type);
+    const shader = gl.createShader(type);
 
-  // Send the source to the shader object
+    // Send the source to the shader object
 
-  gl.shaderSource(shader, source);
+    gl.shaderSource(shader, source);
 
-  // Compile the shader program
+    // Compile the shader program
 
-  gl.compileShader(shader);
+    gl.compileShader(shader);
 
-  // See if it compiled successfully
+    // See if it compiled successfully
 
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
-    gl.deleteShader(shader);
-    return null;
-  }
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+        alert('An error occurred compiling the shaders: ' + gl.getShaderInfoLog(shader));
+        gl.deleteShader(shader);
+        return null;
+    }
 
-  return shader;
+    return shader;
 }
 
 
-function keyBindings()
-{
-     
-    Mousetrap.bind('w', function() {
+function keyBindings() {
+
+    Mousetrap.bind('w', function () {
         eye[1] += 0.1;
     });
-    Mousetrap.bind('s', function() {
+    Mousetrap.bind('s', function () {
         eye[1] -= 0.1;
     });
-    Mousetrap.bind('left', function() {
+    Mousetrap.bind('left', function () {
         player.pos[0] += 2;
     });
-    Mousetrap.bind('right', function() {
+    Mousetrap.bind('right', function () {
         player.pos[0] -= 2;
     });
-    Mousetrap.bind('up', function() {
-        player.speed = [0,0.24,0.1];
-        // player.pos[1] -= 2;
+    Mousetrap.bind('up', function () {
+        if (!player.is_jump) {
+            var jumpVelocity = 0.18;
+            if (player.superJump) {
+                jumpVelocity = 0.28;
+            }
+            player.is_jump = true;
+            player.pos[1] += 0.02;
+            vec3.add(player.speed, player.speed, [0, jumpVelocity, 0]);
+        }
+
     }, 'keydown');
-    Mousetrap.bind('down', function() {
+    Mousetrap.bind('down', function () {
         // player.pos[] -= 2;
     });
-    Mousetrap.bind('a', function() {
+    Mousetrap.bind('a', function () {
         eye[0] -= 2;
     });
-    Mousetrap.bind('d', function() {
+    Mousetrap.bind('d', function () {
         eye[0] += 2;
     });
 
+}
+
+function intersect(a, b) {
+    return (a.minX <= b.maxX && a.maxX >= b.minX) &&
+        (a.minY <= b.maxY && a.maxY >= b.minY) &&
+        (a.minZ <= b.maxZ && a.maxZ >= b.minZ);
 }

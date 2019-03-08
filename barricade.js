@@ -25,6 +25,13 @@ class Barricade {
         var topDepth = 0.25;
         var height = 0.5;
 
+
+        this.minX = -baseWidth + pos[0];
+        this.minY = -height + pos[1];
+        this.minZ = -baseDepth + pos[2]; 
+        this.maxX = +topWidth + pos[0];
+        this.maxY = +height + pos[1];
+        this.maxZ = +topDepth + pos[2];
       
         const positions = [
           // Front face
