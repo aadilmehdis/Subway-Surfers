@@ -13,6 +13,180 @@ var crates = [];
 var jetpacks = [];
 var jumpshoes = [];
 var walls = [];
+var timer = 0;
+
+const canvas = document.querySelector('#glcanvas');
+const gl = canvas.getContext('webgl');
+var gray = false;
+
+  // Vertex shader program
+
+  const vsSource = `
+    attribute vec4 aVertexPosition;
+    attribute vec3 aVertexNormal;
+    attribute vec2 aTextureCoord;
+    uniform mat4 uNormalMatrix;
+    uniform mat4 uModelViewMatrix;
+    uniform mat4 uProjectionMatrix;
+    varying highp vec2 vTextureCoord;
+    varying highp vec3 vLighting;
+    void main(void) {
+      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+      vTextureCoord = aTextureCoord;
+      // Apply lighting effect
+      highp vec3 ambientLight = vec3(0.5, 0.5, 0.5);
+      highp vec3 directionalLightColor = vec3(1, 1, 1);
+      highp vec3 directionalVector = normalize(vec3(0.85, 0.8, 0.75));
+      highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+      highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+      vLighting = ambientLight + (directionalLightColor * directional);
+    }
+  `;
+
+  const vsSourceFlash = `
+  attribute vec4 aVertexPosition;
+  attribute vec3 aVertexNormal;
+  attribute vec2 aTextureCoord;
+  uniform mat4 uNormalMatrix;
+  uniform mat4 uModelViewMatrix;
+  uniform mat4 uProjectionMatrix;
+  varying highp vec2 vTextureCoord;
+  varying highp vec3 vLighting;
+  void main(void) {
+    gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
+    vTextureCoord = aTextureCoord;
+    // Apply lighting effect
+    highp vec3 ambientLight = vec3(0.8, 0.8, 0.8);
+    highp vec3 directionalLightColor = vec3(1, 1, 1);
+    highp vec3 directionalVector = normalize(vec3(0.85, 0.8, 0.75));
+    highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
+    highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
+    vLighting = ambientLight + (directionalLightColor * directional);
+  }
+`;
+  // Fragment shader program
+
+  const fsSource = `
+    varying highp vec2 vTextureCoord;
+    varying highp vec3 vLighting;
+
+    uniform sampler2D uSampler;
+
+    void main(void) {
+      highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
+
+      gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+    }
+  `;
+
+  const fsSourceGray = `
+    varying highp vec2 vTextureCoord;
+    varying highp vec3 vLighting;
+    uniform sampler2D uSampler;
+    void main(void) {
+      highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
+      texelColor[0] *= 0.299;
+      texelColor[1] *= 0.587;
+      texelColor[2] *= 0.114;
+      highp float g = texelColor[0] + texelColor[1] + texelColor[2];
+      texelColor[0] = g;
+      texelColor[1] = g;
+      texelColor[2] = g;
+    //   highp float grey = dot(vec3(texelColor[0], texelColor[1], texelColor[3]), (0.289, 0.517, 0.114));
+    //   gl_FragColor = vec4(g, g, g, 1);
+      gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+
+    }
+  `;
+
+  // Initialize a shader program; this is where all the lighting
+  // for the vertices and so forth is established.
+  const shaderProgramNormal = initShaderProgram(gl, vsSource, fsSource);
+  const shaderProgramGray = initShaderProgram(gl, vsSource, fsSourceGray);
+  const shaderProgramGrayFlash = initShaderProgram(gl, vsSourceFlash, fsSourceGray);
+  const shaderProgramNormalFlash = initShaderProgram(gl, vsSourceFlash, fsSource);
+
+
+  // Collect all the info needed to use the shader program.
+  // Look up which attributes our shader program is using
+  // for aVertexPosition, aVertexNormal, aTextureCoord,
+  // and look up uniform locations.
+  const programInfoNormal = {
+    program: shaderProgramNormal,
+    attribLocations: {
+      vertexPosition: gl.getAttribLocation(shaderProgramNormal, 'aVertexPosition'),
+      vertexNormal: gl.getAttribLocation(shaderProgramNormal, 'aVertexNormal'),
+      textureCoord: gl.getAttribLocation(shaderProgramNormal, 'aTextureCoord'),
+    },
+    uniformLocations: {
+      projectionMatrix: gl.getUniformLocation(shaderProgramNormal, 'uProjectionMatrix'),
+      modelViewMatrix: gl.getUniformLocation(shaderProgramNormal, 'uModelViewMatrix'),
+      normalMatrix: gl.getUniformLocation(shaderProgramNormal, 'uNormalMatrix'),
+      uSampler: gl.getUniformLocation(shaderProgramNormal, 'uSampler'),
+    },
+  };
+
+  const programInfoGray = {
+    program: shaderProgramGray,
+    attribLocations: {
+      vertexPosition: gl.getAttribLocation(shaderProgramGray, 'aVertexPosition'),
+      vertexNormal: gl.getAttribLocation(shaderProgramGray, 'aVertexNormal'),
+      textureCoord: gl.getAttribLocation(shaderProgramGray, 'aTextureCoord'),
+    },
+    uniformLocations: {
+      projectionMatrix: gl.getUniformLocation(shaderProgramGray, 'uProjectionMatrix'),
+      modelViewMatrix: gl.getUniformLocation(shaderProgramGray, 'uModelViewMatrix'),
+      normalMatrix: gl.getUniformLocation(shaderProgramGray, 'uNormalMatrix'),
+      uSampler: gl.getUniformLocation(shaderProgramGray, 'uSampler'),
+    },
+  };
+
+  const programInfoNormalFlash = {
+    program: shaderProgramNormalFlash,
+    attribLocations: {
+      vertexPosition: gl.getAttribLocation(shaderProgramNormalFlash, 'aVertexPosition'),
+      vertexNormal: gl.getAttribLocation(shaderProgramNormalFlash, 'aVertexNormal'),
+      textureCoord: gl.getAttribLocation(shaderProgramNormalFlash, 'aTextureCoord'),
+    },
+    uniformLocations: {
+      projectionMatrix: gl.getUniformLocation(shaderProgramNormalFlash, 'uProjectionMatrix'),
+      modelViewMatrix: gl.getUniformLocation(shaderProgramNormalFlash, 'uModelViewMatrix'),
+      normalMatrix: gl.getUniformLocation(shaderProgramNormalFlash, 'uNormalMatrix'),
+      uSampler: gl.getUniformLocation(shaderProgramNormalFlash, 'uSampler'),
+    },
+  };
+
+  const programInfoGrayFlash = {
+    program: shaderProgramGrayFlash,
+    attribLocations: {
+      vertexPosition: gl.getAttribLocation(shaderProgramGrayFlash, 'aVertexPosition'),
+      vertexNormal: gl.getAttribLocation(shaderProgramGrayFlash, 'aVertexNormal'),
+      textureCoord: gl.getAttribLocation(shaderProgramGrayFlash, 'aTextureCoord'),
+    },
+    uniformLocations: {
+      projectionMatrix: gl.getUniformLocation(shaderProgramGrayFlash, 'uProjectionMatrix'),
+      modelViewMatrix: gl.getUniformLocation(shaderProgramGrayFlash, 'uModelViewMatrix'),
+      normalMatrix: gl.getUniformLocation(shaderProgramGrayFlash, 'uNormalMatrix'),
+      uSampler: gl.getUniformLocation(shaderProgramGrayFlash, 'uSampler'),
+    },
+  };
+
+
+  programInfo =  programInfoNormal;
+
+  Mousetrap.bind('g', function() {
+    if(programInfo == programInfoNormal)
+    {
+        programInfo = programInfoGray;
+        gray = true;
+    }
+    else
+    {
+        programInfo = programInfoNormal;
+        gray = false;
+    }
+});
+
 
 
 
@@ -22,8 +196,6 @@ main();
 // Start here
 //
 function main() {
-  const canvas = document.querySelector('#glcanvas');
-  const gl = canvas.getContext('webgl');
 
   t = new Train(gl, [0,-2,100], 10);
   player = new Player(gl, [0,-2.5,7]);
@@ -83,120 +255,13 @@ function main() {
     return;
   }
 
-  // Vertex shader program
-
-  const vsSource = `
-    attribute vec4 aVertexPosition;
-    attribute vec3 aVertexNormal;
-    attribute vec2 aTextureCoord;
-    uniform mat4 uNormalMatrix;
-    uniform mat4 uModelViewMatrix;
-    uniform mat4 uProjectionMatrix;
-    varying highp vec2 vTextureCoord;
-    varying highp vec3 vLighting;
-    void main(void) {
-      gl_Position = uProjectionMatrix * uModelViewMatrix * aVertexPosition;
-      vTextureCoord = aTextureCoord;
-      // Apply lighting effect
-      highp vec3 ambientLight = vec3(0.3, 0.3, 0.3);
-      highp vec3 directionalLightColor = vec3(1, 1, 1);
-      highp vec3 directionalVector = normalize(vec3(0.85, 0.8, 0.75));
-      highp vec4 transformedNormal = uNormalMatrix * vec4(aVertexNormal, 1.0);
-      highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);
-      vLighting = ambientLight + (directionalLightColor * directional);
-    }
-  `;
-
-  // Fragment shader program
-
-  const fsSource = `
-    varying highp vec2 vTextureCoord;
-    varying highp vec3 vLighting;
-
-    uniform sampler2D uSampler;
-
-    void main(void) {
-      highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
-
-      gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
-    }
-  `;
-
-  const fsSourceGray = `
-    varying highp vec2 vTextureCoord;
-    varying highp vec3 vLighting;
-    uniform sampler2D uSampler;
-    void main(void) {
-      highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
-      texelColor[0] *= 0.299;
-      texelColor[1] *= 0.587;
-      texelColor[2] *= 0.114;
-      highp float g = texelColor[0] + texelColor[1] + texelColor[2];
-    //   highp float grey = dot(vec3(texelColor[0], texelColor[1], texelColor[3]), (0.289, 0.517, 0.114));
-      gl_FragColor = vec4(g, g, g, 1);
-    }
-  `;
-
-  // Initialize a shader program; this is where all the lighting
-  // for the vertices and so forth is established.
-  const shaderProgramNormal = initShaderProgram(gl, vsSource, fsSource);
-  const shaderProgramGray = initShaderProgram(gl, vsSource, fsSourceGray);
-
-  // Collect all the info needed to use the shader program.
-  // Look up which attributes our shader program is using
-  // for aVertexPosition, aVertexNormal, aTextureCoord,
-  // and look up uniform locations.
-  const programInfoNormal = {
-    program: shaderProgramNormal,
-    attribLocations: {
-      vertexPosition: gl.getAttribLocation(shaderProgramNormal, 'aVertexPosition'),
-      vertexNormal: gl.getAttribLocation(shaderProgramNormal, 'aVertexNormal'),
-      textureCoord: gl.getAttribLocation(shaderProgramNormal, 'aTextureCoord'),
-    },
-    uniformLocations: {
-      projectionMatrix: gl.getUniformLocation(shaderProgramNormal, 'uProjectionMatrix'),
-      modelViewMatrix: gl.getUniformLocation(shaderProgramNormal, 'uModelViewMatrix'),
-      normalMatrix: gl.getUniformLocation(shaderProgramNormal, 'uNormalMatrix'),
-      uSampler: gl.getUniformLocation(shaderProgramNormal, 'uSampler'),
-    },
-  };
-
-  const programInfoGray = {
-    program: shaderProgramGray,
-    attribLocations: {
-      vertexPosition: gl.getAttribLocation(shaderProgramGray, 'aVertexPosition'),
-      vertexNormal: gl.getAttribLocation(shaderProgramGray, 'aVertexNormal'),
-      textureCoord: gl.getAttribLocation(shaderProgramGray, 'aTextureCoord'),
-    },
-    uniformLocations: {
-      projectionMatrix: gl.getUniformLocation(shaderProgramGray, 'uProjectionMatrix'),
-      modelViewMatrix: gl.getUniformLocation(shaderProgramGray, 'uModelViewMatrix'),
-      normalMatrix: gl.getUniformLocation(shaderProgramGray, 'uNormalMatrix'),
-      uSampler: gl.getUniformLocation(shaderProgramGray, 'uSampler'),
-    },
-  };
-
-
-  programInfo =  programInfoNormal;
-
-  Mousetrap.bind('g', function() {
-    if(programInfo == programInfoNormal)
-    {
-        programInfo = programInfoGray;
-    }
-    else
-    {
-        programInfo = programInfoNormal;
-    }
-});
-
 
   var then = 0;
 
   // Draw the scene repeatedly
   function render(now) {
       console.log(eye);
-      
+    timer++;
     now *= 0.001;  // convert to seconds
     const deltaTime = now - then;
     then = now;
@@ -360,9 +425,33 @@ function drawScene(gl, programInfo, deltaTime) {
     {
         jetpacks[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
+
+    var flash = (timer%100 <= 5)
     for(var i=0;i<walls.length;++i)
     {
-        walls[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+        if(flash)
+        {
+            if(gray)
+            {
+                walls[i].drawObject(gl, viewMatrix, projectionMatrix, programInfoGrayFlash);
+            }
+            else
+            {
+                walls[i].drawObject(gl, viewMatrix, projectionMatrix, programInfoNormalFlash);
+            }
+        }
+        else
+        {
+            if(gray)
+            {
+                walls[i].drawObject(gl, viewMatrix, projectionMatrix, programInfoGray);
+            }
+            else
+            {
+                walls[i].drawObject(gl, viewMatrix, projectionMatrix, programInfoNormal);
+            }
+        }
+        
     }
 }
 
