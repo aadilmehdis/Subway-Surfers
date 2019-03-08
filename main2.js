@@ -270,6 +270,8 @@ function main() {
     drawScene(gl, programInfo, deltaTime);
 
     requestAnimationFrame(render);
+
+
   }
   requestAnimationFrame(render);
 }
@@ -331,24 +333,88 @@ function isPowerOf2(value) {
 }
 
 
+
 function tick(deltaTime)
 {
     eye[2] += 0.1;
-    // eye[1] = player.pos[1] + 1
-    // eye[0] = player.pos[0]
-    // temp = player.pos
-    // eye = temp
-    // eye[2] -= 0.1;
+    eye[1] = player.pos[1] + 1;
+    eye[0] = player.pos[0];
 
     t.tick(deltaTime);
     player.tick(deltaTime);
-    for(var i=0;i<jetpacks.length; ++i)
+    // for(var i=0;i<jetpacks.length; ++i)
+    // {
+    //     jetpacks[i].tick();
+    // }
+    // for(var i=0;i<jumpshoes.length; ++i)
+    // {
+    //     jumpshoes[i].tick();
+    // }
+
+    for(var i = 0 ; i< sky.length ; ++i)
+    {
+        if(eye[2] > sky[i].pos[2] + 20)
+        {
+            sky.splice(i, 1);
+        }
+    }
+    for(var i = 0 ; i< tracks.length ; ++i)
+    {
+        if(eye[2] > tracks[i].pos[2] + 20)
+        {
+            tracks.splice(i, 1);
+        }
+    }
+    for(var i = 0 ; i< barricades.length ; ++i)
+    {
+        if(eye[2] > barricades[i].pos[2] + 20)
+        {
+            barricades.splice(i, 1);
+        }
+    }
+    for(var i = 0 ; i< pavement.length ; ++i)
+    {
+        if(eye[2] > pavement[i].pos[2] + 20)
+        {
+            pavement.splice(i, 1);
+        }
+    }
+    for(var i = 0 ; i< trees.length ; ++i)
+    {
+        if(eye[2] > trees[i].pos[2] + 20)
+        {
+            trees.splice(i, 1);
+        }
+    }
+    for(var i = 0 ; i< crates.length ; ++i)
+    {
+        if(eye[2] > crates[i].pos[2] + 20)
+        {
+            crates.splice(i, 1);
+        }
+    }
+    for(var i = 0 ; i< jetpacks.length ; ++i)
     {
         jetpacks[i].tick();
+        if(eye[2] > jetpacks[i].pos[2] + 20)
+        {
+            jetpacks.splice(i, 1);
+        }
     }
-    for(var i=0;i<jumpshoes.length; ++i)
+    for(var i = 0 ; i< jumpshoes.length ; ++i)
     {
         jumpshoes[i].tick();
+        if(eye[2] > jumpshoes[i].pos[2] + 20)
+        {
+            jumpshoes.splice(i, 1);
+        }
+    }
+    for(var i = 0 ; i< walls.length ; ++i)
+    {
+        if(eye[2] > walls[i].pos[2] + 20)
+        {
+            walls.splice(i, 1);
+        }
     }
 }
 
