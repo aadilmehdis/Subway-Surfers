@@ -318,7 +318,21 @@ function main() {
 
         tick(deltaTime);
         drawScene(gl, programInfo, deltaTime);
-        if (gameOver) return;
+        document.getElementById("Score").innerHTML = "Score "+score;
+        if (gameOver) 
+        {
+            if(gameWon)
+            {
+                document.getElementById("Win").style.display = "block";
+                document.getElementById("Win").innerHTML = "Game Won";
+            }
+            else
+            {
+                document.getElementById("Win").style.display = "block";
+                document.getElementById("Win").innerHTML = "Game Lost";
+            }
+            return;
+        }
 
         requestAnimationFrame(render);
 
