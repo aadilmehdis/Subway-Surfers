@@ -6,7 +6,7 @@ class Pavement {
         this.rotate = 0;
         this.rotationSpeed = 1;
 
-        this.texture = loadTexture(gl, 'sand.jpg');
+        this.texture = loadTexture(gl, 'greengrass.jpg');
 
         // Create a buffer for the cube's vertex positions.
 

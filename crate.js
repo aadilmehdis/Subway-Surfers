@@ -1,8 +1,7 @@
 class Crate {
 
-    constructor(gl, pos)
-    {
-        this.speed = [0,0,-0.3];
+    constructor(gl, pos) {
+        this.speed = [0, 0, -0.3];
         this.pos = pos;
         this.rotate = 0;
         this.rotationSpeed = 1;
@@ -15,177 +14,407 @@ class Crate {
 
         // Select the positionBuffer as the one to apply buffer
         // operations to from here out.
-      
+
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-      
+
         // Now create an array of positions for the cube.
-        var baseWidth = 0.35;
-        var baseDepth = 0.35;
-        var topWidth = 0.35;
-        var topDepth = 0.35;
+        var baseWidth = 0.5;
+        var baseDepth = 0.15;
+        var topWidth = 0.5;
+        var topDepth = 0.15;
         var height = 0.35;
 
-      
+
         const positions = [
-          // Front face
-          -baseWidth, -height,  baseDepth,
-           baseWidth, -height,  baseDepth,
-           topWidth,  height,  topDepth,
-          -topWidth,  height,  topDepth,
-      
-          // Back face
-          -baseWidth, -height, -baseDepth,
-          -topWidth,  height, -topDepth,
-           topWidth,  height, -topDepth,
-           baseWidth, -height, -baseDepth,
-      
-          // Top face
-          -topWidth,  height, -topDepth,
-           topWidth,  height, -topDepth,
-           topWidth,  height,  topDepth,
-          -topWidth,  height,  topDepth,
-      
-          // Bottom face
-          -baseWidth, -height, -baseDepth,
-           baseWidth, -height, -baseDepth,
-           baseWidth, -height,  baseDepth,
-          -baseWidth, -height,  baseDepth,
-      
-          // Right face
-           baseWidth, -height, -baseDepth,
-           topWidth,  height, -topDepth,
-           topWidth,  height,  topDepth,
-           baseWidth, -height,  baseDepth,
-      
-          // Left face
-          -baseWidth, -height, -baseDepth,
-          -baseWidth, -height,  baseDepth,
-          -topWidth,  height,  topDepth,
-          -topWidth,  height, -topDepth,
+            // Front face
+            -baseWidth, -height, baseDepth,
+            baseWidth, -height, baseDepth,
+            topWidth, height, topDepth,
+            -topWidth, height, topDepth,
+
+            // Back face
+            -baseWidth, -height, -baseDepth,
+            topWidth, -height, -topDepth,
+            topWidth, height, -topDepth,
+            -baseWidth, height, -baseDepth,
+
+            // Top face
+            -topWidth, height, -topDepth,
+            topWidth, height, -topDepth,
+            topWidth, height, topDepth,
+            -topWidth, height, topDepth,
+
+            // Bottom face
+            -baseWidth, -height, -baseDepth,
+            baseWidth, -height, -baseDepth,
+            baseWidth, -height, baseDepth,
+            -baseWidth, -height, baseDepth,
+
+            // Right face
+            baseWidth, -height, -baseDepth,
+            topWidth, height, -topDepth,
+            topWidth, height, topDepth,
+            baseWidth, -height, baseDepth,
+
+            // Left face
+            -baseWidth, -height, -baseDepth,
+            -baseWidth, -height, baseDepth,
+            -topWidth, height, topDepth,
+            -topWidth, height, -topDepth,
+
+
+            // Front face
+            -0.1+baseWidth, -height * 2 - 0.35, 0.1,
+            0.1 + baseWidth, -height * 2 - 0.35, 0.1,
+            0.1 + baseWidth, height * 2 - 0.35, 0.1,
+            -0.1 + baseWidth, height * 2 - 0.35, 0.1,
+
+            // Back face
+            -0.1 + baseWidth, -height * 2 - 0.35, -0.1,
+            0.1 + baseWidth, -height * 2 - 0.35, -0.1,
+            0.1 + baseWidth, height * 2 - 0.35, -0.1,
+            -0.1 + baseWidth, height * 2 - 0.35, -0.1,
+
+            // Top face
+            -0.1 + baseWidth, height * 2 - 0.35, -0.1,
+            0.1 + baseWidth, height * 2 - 0.35, -0.1,
+            0.1 + baseWidth, height * 2 - 0.35, 0.1,
+            -0.1 + baseWidth, height * 2 - 0.35, 0.1,
+
+            // Bottom face
+            -0.1 + baseWidth, -height * 2 - 0.35, -0.1,
+            0.1 + baseWidth, -height * 2 - 0.35, -0.1,
+            0.1 + baseWidth, -height * 2 - 0.35, 0.1,
+            -0.1 + baseWidth, -height * 2 - 0.35, 0.1,
+
+            // Right face
+            0.1 + baseWidth, -height * 2 - 0.35, -0.1,
+            0.1 + baseWidth, height * 2 - 0.35, -0.1,
+            0.1 + baseWidth, height * 2 - 0.35, 0.1,
+            0.1 + baseWidth, -height * 2 - 0.35, 0.1,
+
+            // Left face
+            -0.1 + baseWidth, -height * 2 - 0.35, -0.1,
+            -0.1 + baseWidth, -height * 2 - 0.35, 0.1,
+            -0.1 + baseWidth, height * 2 - 0.35, 0.1,
+            -0.1 + baseWidth, height * 2 - 0.35, -0.1,
+
+
+                        // Front face
+                        -0.1 - baseWidth, -height * 2 - 0.35, 0.1,
+                        0.1 - baseWidth, -height * 2 - 0.35, 0.1,
+                        0.1 - baseWidth, height * 2 - 0.35, 0.1,
+                        -0.1 - baseWidth, height * 2 - 0.35, 0.1,
+            
+                        // Back face
+                        -0.1 - baseWidth, -height * 2 - 0.35, -0.1,
+                        0.1 - baseWidth, -height * 2 - 0.35, -0.1,
+                        0.1 - baseWidth, height * 2 - 0.35, -0.1,
+                        -0.1 - baseWidth, height * 2 - 0.35, -0.1,
+            
+                        // Top face
+                        -0.1 - baseWidth, height * 2 - 0.35, -0.1,
+                        0.1 - baseWidth, height * 2 - 0.35, -0.1,
+                        0.1 - baseWidth, height * 2 - 0.35, 0.1,
+                        -0.1 - baseWidth, height * 2 - 0.35, 0.1,
+            
+                        // Bottom face
+                        -0.1 - baseWidth, -height * 2 - 0.35, -0.1,
+                        0.1 - baseWidth, -height * 2 - 0.35, -0.1,
+                        0.1 - baseWidth, -height * 2 - 0.35, 0.1,
+                        -0.1 - baseWidth, -height * 2 - 0.35, 0.1,
+            
+                        // Right face
+                        0.1 - baseWidth, -height * 2 - 0.35, -0.1,
+                        0.1 - baseWidth, height * 2 - 0.35, -0.1,
+                        0.1 - baseWidth, height * 2 - 0.35, 0.1,
+                        0.1 - baseWidth, -height * 2 - 0.35, 0.1,
+            
+                        // Left face
+                        -0.1 - baseWidth, -height * 2 - 0.35, -0.1,
+                        -0.1 - baseWidth, -height * 2 - 0.35, 0.1,
+                        -0.1 - baseWidth, height * 2 - 0.35, 0.1,
+                        -0.1 - baseWidth, height * 2 - 0.35, -0.1,
+
+
         ];
         // Now pass the list of positions into WebGL to build the
         // shape. We do this by creating a Float32Array from the
         // JavaScript array, then use it to fill the current buffer.
-      
+
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
-      
+
         // Set up the normals for the vertices, so that we can compute lighting.
-      
+
         const normalBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
-      
+
         const vertexNormals = [
-          // Front
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
-      
-          // Back
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
-      
-          // Top
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
-      
-          // Bottom
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
-      
-          // Right
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
-      
-          // Left
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
+            // Front
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Back
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Top
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Bottom
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Right
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Left
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+
+            // Front
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Back
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Top
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Bottom
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Right
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Left
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+
+            // Front
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Back
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Top
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Bottom
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Right
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Left
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
 
         ];
-      
+
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals),
-                      gl.STATIC_DRAW);
-      
+            gl.STATIC_DRAW);
+
         // Now set up the texture coordinates for the faces.
-      
+
         const textureCoordBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
-      
+
         const textureCoordinates = [
-          // Front
-          0.0,  0.0,
-          1.0,  0.0,
-          1.0,  1.0,
-          0.0,  1.0,
-          // Back
-          0.0,  0.0,
-          1.0,  0.0,
-          1.0,  1.0,
-          0.0,  1.0,
-          // Top
-          0.0,  0.0,
-          1.0,  0.0,
-          1.0,  1.0,
-          0.0,  1.0,
-          // Bottom
-          0.0,  0.0,
-          1.0,  0.0,
-          1.0,  1.0,
-          0.0,  1.0,
-          // Right
-          0.0,  0.0,
-          1.0,  0.0,
-          1.0,  1.0,
-          0.0,  1.0,
-          // Left
-          0.0,  0.0,
-          1.0,  0.0,
-          1.0,  1.0,
-          0.0,  1.0,
+            // Front
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Back
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Top
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Bottom
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Right
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Left
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+
+            // Front
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Back
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Top
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Bottom
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Right
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Left
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+
+            // Front
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Back
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Top
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Bottom
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Right
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Left
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
         ];
-      
+
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
-                      gl.STATIC_DRAW);
-      
+            gl.STATIC_DRAW);
+
         // Build the element array buffer; this specifies the indices
         // into the vertex arrays for each face's vertices.
-      
+
         const indexBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-      
+
         // This array defines each face as two triangles, using the
         // indices into the vertex array to specify each triangle's
         // position.
-      
+
         const indices = [
-          0,  1,  2,      0,  2,  3,    // front
-          4,  5,  6,      4,  6,  7,    // back
-          8,  9,  10,     8,  10, 11,   // top
-          12, 13, 14,     12, 14, 15,   // bottom
-          16, 17, 18,     16, 18, 19,   // right
-          20, 21, 22,     20, 22, 23,   // left
+            0, 1, 2, 0, 2, 3, // front
+            4, 5, 6, 4, 6, 7, // back
+            8, 9, 10, 8, 10, 11, // top
+            12, 13, 14, 12, 14, 15, // bottom
+            16, 17, 18, 16, 18, 19, // right
+            20, 21, 22, 20, 22, 23, // left
+
+            48, 49, 50, 48, 50, 51, // front
+            52, 53, 54, 52, 54, 55, // back
+            56, 57, 58, 56, 58, 59, // top
+            60, 61, 62, 60, 62, 63, // bottom
+            64, 65, 66, 64, 66, 67, // right
+            68, 69, 70, 68, 70, 71, // left
+
+
+            24, 25, 26, 24, 26, 27, // front
+            28, 29, 30, 28, 30, 31, // back
+            32, 33, 34, 32, 34, 35, // top
+            36, 47, 38, 36, 38, 39, // bottom
+            40, 51, 42, 40, 42, 43, // right
+            44, 55, 46, 44, 46, 47, // left
+
         ];
-      
+
         // Now send the element array to GL
-      
+
         gl.bufferData(gl.ELEMENT_ARRAY_BUFFER,
             new Uint16Array(indices), gl.STATIC_DRAW);
-      
+
         this.buffer = {
-          position: positionBuffer,
-          normal: normalBuffer,
-          textureCoord: textureCoordBuffer,
-          indices: indexBuffer,
+            position: positionBuffer,
+            normal: normalBuffer,
+            textureCoord: textureCoordBuffer,
+            indices: indexBuffer,
         };
     }
 
@@ -208,10 +437,10 @@ class Crate {
         //               [0, 0, 1]);       // axis to rotate around (Z)
 
 
-        mat4.rotate(modelMatrix,  // destination matrix
-                        modelMatrix,  // matrix to rotate
-                        Math.PI,     // amount to rotate in radians
-                        [0, 1, 0]);       // axis to rotate around (Z)
+        mat4.rotate(modelMatrix, // destination matrix
+            modelMatrix, // matrix to rotate
+            Math.PI, // amount to rotate in radians
+            [0, 1, 0]); // axis to rotate around (Z)
 
 
         const modelViewMatrix = mat4.create();
@@ -316,15 +545,14 @@ class Crate {
         gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
         {
-            const vertexCount = 36;
+            const vertexCount = 80;
             const type = gl.UNSIGNED_SHORT;
             const offset = 0;
             gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
         }
     }
 
-    tick(deltaTime)
-    {
+    tick(deltaTime) {
         ;
     }
 }

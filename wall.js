@@ -1,13 +1,13 @@
-class JetPack {
+class Wall {
 
     constructor(gl, pos)
     {
         this.speed = [0,0,-0.3];
         this.pos = pos;
         this.rotate = 0;
-        this.rotationSpeed = 0.05;
+        this.rotationSpeed = 1;
 
-        this.texture = loadTexture(gl, 'jp.jpeg');
+        this.texture = loadTexture(gl, 'wall1.jpeg');
 
         // Create a buffer for the cube's vertex positions.
 
@@ -19,11 +19,11 @@ class JetPack {
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       
         // Now create an array of positions for the cube.
-        var baseWidth = 0.15;
-        var baseDepth = 0.15;
-        var topWidth = 0.15;
-        var topDepth = 0.15;
-        var height = 0.15;
+        var baseWidth = 1;
+        var baseDepth = 25;
+        var topWidth = 0.5;
+        var topDepth = 25;
+        var height = 4;
 
       
         const positions = [
@@ -100,10 +100,12 @@ class JetPack {
           0.0,  1.0,  0.0,
       
           // Right
+          0.0,  1.0,  0.0,
           0.0,  0.0,  0.0,
           1.0,  0.0,  0.0,
           1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
+
+
       
           // Left
           0.0,  0.0,  0.0,
@@ -123,15 +125,15 @@ class JetPack {
       
         const textureCoordinates = [
           // Front
-          1.0,  1.0,
-          0.0,  1.0,
           0.0,  0.0,
           1.0,  0.0,
+          1.0,  1.0,
+          0.0,  1.0,
           // Back
-          0.0,  1.0,
           0.0,  0.0,
           1.0,  0.0,
           1.0,  1.0,
+          0.0,  1.0,
           // Top
           0.0,  0.0,
           1.0,  0.0,
@@ -143,15 +145,17 @@ class JetPack {
           1.0,  1.0,
           0.0,  1.0,
           // Right
-          0.0,  1.0,
-          0.0,  0.0,
           1.0,  0.0,
           1.0,  1.0,
+          0.0,  1.0,
+          0.0,  0.0,
+
+
           // Left
-          1.0,  1.0,
-          0.0,  1.0,
           0.0,  0.0,
           1.0,  0.0,
+          1.0,  1.0,
+          0.0,  1.0,
         ];
       
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
@@ -210,7 +214,7 @@ class JetPack {
 
         mat4.rotate(modelMatrix,  // destination matrix
                         modelMatrix,  // matrix to rotate
-                        this.rotate,     // amount to rotate in radians
+                        Math.PI,     // amount to rotate in radians
                         [0, 1, 0]);       // axis to rotate around (Z)
 
 
@@ -325,7 +329,6 @@ class JetPack {
 
     tick(deltaTime)
     {
-        this.rotate += this.rotationSpeed;
         ;
     }
 }

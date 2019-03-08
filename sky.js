@@ -1,13 +1,12 @@
-class JetPack {
+class Sky {
 
     constructor(gl, pos)
     {
-        this.speed = [0,0,-0.3];
         this.pos = pos;
         this.rotate = 0;
-        this.rotationSpeed = 0.05;
+        this.rotationSpeed = 1;
 
-        this.texture = loadTexture(gl, 'jp.jpeg');
+        this.texture = loadTexture(gl, 'sky.jpeg');
 
         // Create a buffer for the cube's vertex positions.
 
@@ -19,50 +18,45 @@ class JetPack {
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       
         // Now create an array of positions for the cube.
-        var baseWidth = 0.15;
-        var baseDepth = 0.15;
-        var topWidth = 0.15;
-        var topDepth = 0.15;
-        var height = 0.15;
-
       
         const positions = [
           // Front face
-          -baseWidth, -height,  baseDepth,
-           baseWidth, -height,  baseDepth,
-           topWidth,  height,  topDepth,
-          -topWidth,  height,  topDepth,
+          -5.75, -0.1,  25.0,
+           5.75, -0.1,  25.0,
+           5.75,  0.1,  25.0,
+          -5.75,  0.1,  25.0,
       
           // Back face
-          -baseWidth, -height, -baseDepth,
-          -topWidth,  height, -topDepth,
-           topWidth,  height, -topDepth,
-           baseWidth, -height, -baseDepth,
+          -5.75, -0.1, -25.0,
+          -5.75,  0.1, -25.0,
+           5.75,  0.1, -25.0,
+           5.75, -0.1, -25.0,
       
           // Top face
-          -topWidth,  height, -topDepth,
-           topWidth,  height, -topDepth,
-           topWidth,  height,  topDepth,
-          -topWidth,  height,  topDepth,
+          -5.75,  0.1,  -25.0,
+          5.75,  0.1, -25.0,
+           5.75,  0.1,  25.0,
+        -5.75,  0.1, 25.0,
       
           // Bottom face
-          -baseWidth, -height, -baseDepth,
-           baseWidth, -height, -baseDepth,
-           baseWidth, -height,  baseDepth,
-          -baseWidth, -height,  baseDepth,
+          -5.75, -0.1, -25.0,
+           5.75, -0.1, -25.0,
+           5.75, -0.1,  25.0,
+          -5.75, -0.1,  25.0,
       
           // Right face
-           baseWidth, -height, -baseDepth,
-           topWidth,  height, -topDepth,
-           topWidth,  height,  topDepth,
-           baseWidth, -height,  baseDepth,
+           5.75, -0.1, -25.0,
+           5.75,  0.1, -25.0,
+           5.75,  0.1,  25.0,
+           5.75, -0.1,  25.0,
       
           // Left face
-          -baseWidth, -height, -baseDepth,
-          -baseWidth, -height,  baseDepth,
-          -topWidth,  height,  topDepth,
-          -topWidth,  height, -topDepth,
+          -5.75, -0.1, -25.0,
+          -5.75, -0.1,  25.0,
+          -5.75,  0.1,  25.0,
+          -5.75,  0.1, -25.0,
         ];
+      
         // Now pass the list of positions into WebGL to build the
         // shape. We do this by creating a Float32Array from the
         // JavaScript array, then use it to fill the current buffer.
@@ -76,41 +70,42 @@ class JetPack {
       
         const vertexNormals = [
           // Front
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
+           0.0,  0.0,  1.0,
+           0.0,  0.0,  1.0,
+           0.0,  0.0,  1.0,
+           0.0,  0.0,  1.0,
       
           // Back
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
+           0.0,  0.0, -1.0,
+           0.0,  0.0, -1.0,
+           0.0,  0.0, -1.0,
+           0.0,  0.0, -1.0,
       
-          // Top
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
+
       
           // Bottom
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
+           0.0, -1.0,  0.0,
+           0.0, -1.0,  0.0,
+           0.0, -1.0,  0.0,
+           0.0, -1.0,  0.0,
       
+            // Top
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+            0.0,  1.0,  0.0,
+            
           // Right
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
+           1.0,  0.0,  0.0,
+           1.0,  0.0,  0.0,
+           1.0,  0.0,  0.0,
+           1.0,  0.0,  0.0,
       
           // Left
-          0.0,  0.0,  0.0,
-          1.0,  0.0,  0.0,
-          1.0,  1.0,  0.0,
-          0.0,  1.0,  0.0,
-
+          -1.0,  0.0,  0.0,
+          -1.0,  0.0,  0.0,
+          -1.0,  0.0,  0.0,
+          -1.0,  0.0,  0.0
         ];
       
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals),
@@ -122,36 +117,42 @@ class JetPack {
         gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
       
         const textureCoordinates = [
-          // Front
+          
+            // Front
+
+          1.0,  0.0,
           1.0,  1.0,
           0.0,  1.0,
           0.0,  0.0,
-          1.0,  0.0,
           // Back
-          0.0,  1.0,
-          0.0,  0.0,
+
           1.0,  0.0,
           1.0,  1.0,
+          0.0,  1.0,
+          0.0,  0.0,
           // Top
-          0.0,  0.0,
+
           1.0,  0.0,
           1.0,  1.0,
           0.0,  1.0,
+          0.0,  0.0,
           // Bottom
-          0.0,  0.0,
+
           1.0,  0.0,
           1.0,  1.0,
           0.0,  1.0,
+          0.0,  0.0,
           // Right
-          0.0,  1.0,
-          0.0,  0.0,
+
           1.0,  0.0,
           1.0,  1.0,
+          0.0,  1.0,
+          0.0,  0.0,
           // Left
+          1.0,  0.0,
           1.0,  1.0,
           0.0,  1.0,
           0.0,  0.0,
-          1.0,  0.0,
         ];
       
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
@@ -202,16 +203,16 @@ class JetPack {
             modelMatrix, // matrix to translate
             this.pos); // amount to translate
 
-        // mat4.rotate(modelMatrix,  // destination matrix
-        //               modelMatrix,  // matrix to rotate
-        //               this.rotate,     // amount to rotate in radians
-        //               [0, 0, 1]);       // axis to rotate around (Z)
-
-
         mat4.rotate(modelMatrix,  // destination matrix
-                        modelMatrix,  // matrix to rotate
-                        this.rotate,     // amount to rotate in radians
-                        [0, 1, 0]);       // axis to rotate around (Z)
+                      modelMatrix,  // matrix to rotate
+                      Math.PI,     // amount to rotate in radians
+                      [1, 0, 0]);       // axis to rotate around (Z)
+
+
+        // mat4.rotate(modelMatrix,  // destination matrix
+        //                 modelMatrix,  // matrix to rotate
+        //                 this.rotate,     // amount to rotate in radians
+        //                 [0, 1, 0]);       // axis to rotate around (Z)
 
 
         const modelViewMatrix = mat4.create();
@@ -325,7 +326,6 @@ class JetPack {
 
     tick(deltaTime)
     {
-        this.rotate += this.rotationSpeed;
-        ;
+        this.rotate = this.rotate + this.rotationSpeed*deltaTime
     }
 }

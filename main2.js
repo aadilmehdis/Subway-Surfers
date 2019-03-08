@@ -1,9 +1,10 @@
-var eye = [0, 0, 0];
+var eye = [0, -1.6, 0];
 var target = [0,0,2000];
 var up = [0, 1, 0];
 
 var t;
 var player;
+var sky = [];
 var tracks = [];
 var barricades = [];
 var pavement = [];
@@ -11,6 +12,7 @@ var trees = [];
 var crates = [];
 var jetpacks = [];
 var jumpshoes = [];
+var walls = [];
 
 
 
@@ -34,6 +36,12 @@ function main() {
       jumpshoes.push(new JumpShoes(gl, [-1,0,20*i+2]));
   }
 
+  for(var i=0 ;i < 40;++i)
+  {
+      walls.push(new Wall(gl,[6,0.6,+50*i]))
+      walls.push(new Wall(gl,[-6,0.6,+50*i]))
+  }
+
   for(var i=0 ;i< 100;++i)
   {
       tracks.push(new Track(gl, [0,-3,10*i]));
@@ -45,13 +53,14 @@ function main() {
   for(var i=0 ;i < 40;++i)
   {
       pavement.push(new Pavement(gl, [0,-3.3,+50*i]));
+      sky.push(new Sky(gl, [0, 4,+50*i]));
   }
   for(var i=0 ;i< 40;++i)
   {
       trees.push(new Tree(gl, [3.9,0,+20*i], 0.25));
       trees.push(new Tree(gl, [-3.9,0,+20*i], 0.25));
   }
-  for(var i=0 ;i< 100;++i)
+  for(var i=0 ;i< 5;++i)
   {
       var pos = [];
       lane = Math.floor(Math.random() * 3)
@@ -103,42 +112,91 @@ function main() {
   const fsSource = `
     varying highp vec2 vTextureCoord;
     varying highp vec3 vLighting;
+
+    uniform sampler2D uSampler;
+
+    void main(void) {
+      highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
+
+      gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+    }
+  `;
+
+  const fsSourceGray = `
+    varying highp vec2 vTextureCoord;
+    varying highp vec3 vLighting;
     uniform sampler2D uSampler;
     void main(void) {
       highp vec4 texelColor = texture2D(uSampler, vTextureCoord);
-      gl_FragColor = vec4(texelColor.rgb * vLighting, texelColor.a);
+      texelColor[0] *= 0.299;
+      texelColor[1] *= 0.587;
+      texelColor[2] *= 0.114;
+      highp float g = texelColor[0] + texelColor[1] + texelColor[2];
+    //   highp float grey = dot(vec3(texelColor[0], texelColor[1], texelColor[3]), (0.289, 0.517, 0.114));
+      gl_FragColor = vec4(g, g, g, 1);
     }
   `;
 
   // Initialize a shader program; this is where all the lighting
   // for the vertices and so forth is established.
-  const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
+  const shaderProgramNormal = initShaderProgram(gl, vsSource, fsSource);
+  const shaderProgramGray = initShaderProgram(gl, vsSource, fsSourceGray);
 
   // Collect all the info needed to use the shader program.
   // Look up which attributes our shader program is using
   // for aVertexPosition, aVertexNormal, aTextureCoord,
   // and look up uniform locations.
-  const programInfo = {
-    program: shaderProgram,
+  const programInfoNormal = {
+    program: shaderProgramNormal,
     attribLocations: {
-      vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-      vertexNormal: gl.getAttribLocation(shaderProgram, 'aVertexNormal'),
-      textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
+      vertexPosition: gl.getAttribLocation(shaderProgramNormal, 'aVertexPosition'),
+      vertexNormal: gl.getAttribLocation(shaderProgramNormal, 'aVertexNormal'),
+      textureCoord: gl.getAttribLocation(shaderProgramNormal, 'aTextureCoord'),
     },
     uniformLocations: {
-      projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-      modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
-      normalMatrix: gl.getUniformLocation(shaderProgram, 'uNormalMatrix'),
-      uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
+      projectionMatrix: gl.getUniformLocation(shaderProgramNormal, 'uProjectionMatrix'),
+      modelViewMatrix: gl.getUniformLocation(shaderProgramNormal, 'uModelViewMatrix'),
+      normalMatrix: gl.getUniformLocation(shaderProgramNormal, 'uNormalMatrix'),
+      uSampler: gl.getUniformLocation(shaderProgramNormal, 'uSampler'),
     },
   };
 
+  const programInfoGray = {
+    program: shaderProgramGray,
+    attribLocations: {
+      vertexPosition: gl.getAttribLocation(shaderProgramGray, 'aVertexPosition'),
+      vertexNormal: gl.getAttribLocation(shaderProgramGray, 'aVertexNormal'),
+      textureCoord: gl.getAttribLocation(shaderProgramGray, 'aTextureCoord'),
+    },
+    uniformLocations: {
+      projectionMatrix: gl.getUniformLocation(shaderProgramGray, 'uProjectionMatrix'),
+      modelViewMatrix: gl.getUniformLocation(shaderProgramGray, 'uModelViewMatrix'),
+      normalMatrix: gl.getUniformLocation(shaderProgramGray, 'uNormalMatrix'),
+      uSampler: gl.getUniformLocation(shaderProgramGray, 'uSampler'),
+    },
+  };
+
+
+  programInfo =  programInfoNormal;
+
+  Mousetrap.bind('g', function() {
+    if(programInfo == programInfoNormal)
+    {
+        programInfo = programInfoGray;
+    }
+    else
+    {
+        programInfo = programInfoNormal;
+    }
+});
 
 
   var then = 0;
 
   // Draw the scene repeatedly
   function render(now) {
+      console.log(eye);
+      
     now *= 0.001;  // convert to seconds
     const deltaTime = now - then;
     then = now;
@@ -211,6 +269,12 @@ function isPowerOf2(value) {
 function tick(deltaTime)
 {
     eye[2] += 0.1;
+    // eye[1] = player.pos[1] + 1
+    // eye[0] = player.pos[0]
+    // temp = player.pos
+    // eye = temp
+    // eye[2] -= 0.1;
+
     t.tick(deltaTime);
     player.tick(deltaTime);
     for(var i=0;i<jetpacks.length; ++i)
@@ -227,7 +291,7 @@ function tick(deltaTime)
 // Draw the scene.
 //
 function drawScene(gl, programInfo, deltaTime) {
-  gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
+  gl.clearColor(0.0, 0.0, 0.0, 0.0);  // Clear to black, fully opaque
   gl.clearDepth(1.0);                 // Clear everything
   gl.enable(gl.DEPTH_TEST);           // Enable depth testing
   gl.depthFunc(gl.LEQUAL);            // Near things obscure far things
@@ -263,6 +327,7 @@ function drawScene(gl, programInfo, deltaTime) {
 
     t.drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     player.drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+
     for(var i=0;i<tracks.length;++i)
     {
         tracks[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
@@ -274,6 +339,10 @@ function drawScene(gl, programInfo, deltaTime) {
     for(var i=0;i<pavement.length;++i)
     {
         pavement[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    }
+    for(var i=0;i<sky.length;++i)
+    {
+        sky[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
     for(var i=0;i<crates.length;++i)
     {
@@ -290,6 +359,10 @@ function drawScene(gl, programInfo, deltaTime) {
     for(var i=0;i<jetpacks.length;++i)
     {
         jetpacks[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    }
+    for(var i=0;i<walls.length;++i)
+    {
+        walls[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
 }
 

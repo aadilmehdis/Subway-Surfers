@@ -19,11 +19,11 @@ class JumpShoes {
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
       
         // Now create an array of positions for the cube.
-        var baseWidth = 0.35;
-        var baseDepth = 0.35;
-        var topWidth = 0.35;
-        var topDepth = 0.35;
-        var height = 0.35;
+        var baseWidth = 0.15;
+        var baseDepth = 0.15;
+        var topWidth = 0.15;
+        var topDepth = 0.15;
+        var height = 0.15;
 
       
         const positions = [
@@ -123,15 +123,15 @@ class JumpShoes {
       
         const textureCoordinates = [
           // Front
-          0.0,  0.0,
-          1.0,  0.0,
           1.0,  1.0,
           0.0,  1.0,
+          0.0,  0.0,
+          1.0,  0.0,
           // Back
+          0.0,  1.0,
           0.0,  0.0,
           1.0,  0.0,
           1.0,  1.0,
-          0.0,  1.0,
           // Top
           0.0,  0.0,
           1.0,  0.0,
@@ -143,15 +143,16 @@ class JumpShoes {
           1.0,  1.0,
           0.0,  1.0,
           // Right
+          0.0,  1.0,
           0.0,  0.0,
           1.0,  0.0,
           1.0,  1.0,
-          0.0,  1.0,
           // Left
-          0.0,  0.0,
-          1.0,  0.0,
           1.0,  1.0,
           0.0,  1.0,
+          0.0,  0.0,
+          1.0,  0.0,
+
         ];
       
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
