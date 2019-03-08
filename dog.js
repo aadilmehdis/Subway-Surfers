@@ -1,4 +1,4 @@
-class Player {
+class Dog {
 
     constructor(gl, pos) {
         this.initSpeed = [0, 0, 0.15];
@@ -7,15 +7,9 @@ class Player {
         this.pos = pos;
         this.rotate = 0;
         this.rotationSpeed = 1;
-        this.is_jump = false;
-        this.superJump = false;
-        this.superJumpTimer = 250;
-        this.jetPack = false;
-        this.jetPackTimer = 250;
-        this.strike1 = false;
-        this.strike2 = false;
 
-        this.texture = loadTexture(gl, 'player.jpg');
+
+        this.texture = loadTexture(gl, 'dog.jpg');
 
         // Create a buffer for the cube's vertex positions.
 
@@ -27,11 +21,11 @@ class Player {
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         // Now create an array of positions for the cube.
-        var baseWidth = 0.25;
-        var baseDepth = 0.01;
-        var topWidth = 0.25;
-        var topDepth = 0.01;
-        var height = 0.4;
+        var baseWidth = 0.15;
+        var baseDepth = 0.15;
+        var topWidth = 0.15;
+        var topDepth = 0.15;
+        var height = 0.15;
 
         this.baseWidth = baseWidth;
         this.baseDepth = baseDepth;
@@ -146,15 +140,15 @@ class Player {
 
         const textureCoordinates = [
             // Front
-            0.0, 0.0,
-            1.0, 0.0,
             1.0, 1.0,
             0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
             // Back
+            0.0, 1.0,
             0.0, 0.0,
             1.0, 0.0,
             1.0, 1.0,
-            0.0, 1.0,
             // Top
             0.0, 0.0,
             1.0, 0.0,
@@ -166,15 +160,15 @@ class Player {
             1.0, 1.0,
             0.0, 1.0,
             // Right
+            0.0, 1.0,
             0.0, 0.0,
             1.0, 0.0,
             1.0, 1.0,
-            0.0, 1.0,
             // Left
-            0.0, 0.0,
-            1.0, 0.0,
             1.0, 1.0,
             0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
@@ -347,46 +341,13 @@ class Player {
     }
 
     tick(deltaTime) {
-        if (this.superJump) {
-            this.superJumpTimer--;
-            if (this.superJumpTimer < 0) {
-                this.superJump = false;
-                this.superJumpTimer = 100;
-            }
-        }
 
-        if (this.jetPack) {
-            this.jetPackTimer--;
-            if (this.jetPackTimer < 0) {
-                this.jetPack = false;
-                this.jetPackTimer = 100;
-            }
-        }
-
-        if (this.jetPack) {
-            this.pos[1] = 3;
-            this.pos[0] += this.initSpeed[0];
-            this.pos[2] += this.initSpeed[2];
-        } else {
-
-            if (this.pos[1] < -2.5) {
-                this.pos[1] = -2.51;
-                this.is_jump = false;
-                // this.speed = [0, 0, 0.1];
-                this.speed[1] = 0;
-                vec3.add(this.pos, this.pos, this.speed);
-
-            } else {
-                // this.speed[1] += this.gravity[1];
-                vec3.add(this.speed, this.speed, this.gravity);
-                vec3.add(this.pos, this.pos, this.speed);
-            }
-            this.minX = this.pos[0] - this.baseWidth;
-            this.minY = this.pos[1] - this.height;
-            this.minZ = this.pos[2] - this.baseDepth;
-            this.maxX = this.pos[0] + this.topWidth;
-            this.maxY = this.pos[1] + this.height;
-            this.maxZ = this.pos[2] + this.topDepth;
-        }
+        vec3.add(this.pos, this.pos, this.speed);
+        this.minX = this.pos[0] - this.baseWidth;
+        this.minY = this.pos[1] - this.height;
+        this.minZ = this.pos[2] - this.baseDepth;
+        this.maxX = this.pos[0] + this.topWidth;
+        this.maxY = this.pos[1] + this.height;
+        this.maxZ = this.pos[2] + this.topDepth;
     }
 }

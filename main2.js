@@ -4,6 +4,8 @@ var up = [0, 1, 0];
 
 var t;
 var player;
+var policeman;
+var dog;
 // var sky = [];
 var tracks = [];
 var barricades = [];
@@ -14,6 +16,9 @@ var jetpacks = [];
 var jumpshoes = [];
 var walls = [];
 var hurdles = [];
+var coins = [];
+
+var gameOver = false;
 
 var timer = 0;
 
@@ -200,6 +205,8 @@ function main() {
 
     t = new Train(gl, [0, -2, 100], 10);
     player = new Player(gl, [0, -2.5, 7]);
+    policeman = new Police(gl, [0, -2.5, 2]);
+    dog = new Dog(gl, [0, -2.5, 3]);
 
     keyBindings();
 
@@ -231,6 +238,12 @@ function main() {
     for (var i = 0; i < 100; ++i) {
         tracks.push(new Track(gl, [0, -3, 10 * i]));
     }
+
+    for (var i = 0; i < 100; ++i) {
+        coins.push(new Coin(gl, [-2, 0, 5 * i]));
+    }
+
+
     for (var i = 0; i < 40; ++i) {
         var pos = [];
         lane = Math.floor(Math.random() * 3)
@@ -286,6 +299,7 @@ function main() {
 
         tick(deltaTime);
         drawScene(gl, programInfo, deltaTime);
+        if(gameOver) return;
 
         requestAnimationFrame(render);
 
@@ -357,8 +371,13 @@ function tick(deltaTime) {
     eye[1] = player.pos[1] + 1;
     eye[0] = player.pos[0];
 
+    policeman.pos[0] = player.pos[0];
+    dog.pos[0] = player.pos[0];
+
     t.tick(deltaTime);
     player.tick(deltaTime);
+    policeman.tick(deltaTime);
+    dog.tick(deltaTime);
 
     for (var i = 0; i < tracks.length; ++i) {
         if (eye[2] > tracks[i].pos[2] + 20) {
@@ -368,10 +387,18 @@ function tick(deltaTime) {
 
     for (var i = 0; i < barricades.length; ++i) {
         if (intersect(player, barricades[i])) {
-            console.log(" barricade");
-        }
-        if (eye[2] > barricades[i].pos[2] + 20) {
-            barricades.splice(i, 1);
+            if (player.strike1) {
+                gameOver = true;
+                policeman.pos[2] += 2;
+            } else {
+                policeman.pos[2] += 1;
+                player.strike1 = true;
+                barricades.splice(i, 1);
+            }
+        } else {
+            if (eye[2] > barricades[i].pos[2] + 20) {
+                barricades.splice(i, 1);
+            }
         }
     }
     for (var i = 0; i < pavement.length; ++i) {
@@ -386,11 +413,20 @@ function tick(deltaTime) {
     }
     for (var i = 0; i < crates.length; ++i) {
         if (intersect(player, crates[i])) {
-            console.log(" crate");
+            if (player.strike1) {
+                gameOver = true;
+                policeman.pos[2] += 2;
+            } else {
+                policeman.pos[2] += 1;
+                player.strike1 = true;
+                crates.splice(i, 1);
+            }
+        } else {
+            if (eye[2] > crates[i].pos[2] + 20) {
+                crates.splice(i, 1);
+            }
         }
-        if (eye[2] > crates[i].pos[2] + 20) {
-            crates.splice(i, 1);
-        }
+
     }
     for (var i = 0; i < jetpacks.length; ++i) {
         if (intersect(player, jetpacks[i])) {
@@ -422,11 +458,39 @@ function tick(deltaTime) {
     }
     for (var i = 0; i < hurdles.length; ++i) {
         if (intersect(player, hurdles[i])) {
-            console.log(" hurdle");
+            if (player.strike1) {
+                gameOver = true;
+                policeman.pos[2] += 2;
+            } else {
+                policeman.pos[2] += 1;
+                player.strike1 = true;
+                hurdles.splice(i, 1);
+            }
+
+        } else {
+            if (eye[2] > hurdles[i].pos[2] + 20) {
+                hurdles.splice(i, 1);
+            }
         }
-        if (eye[2] > hurdles[i].pos[2] + 20) {
-            hurdles.splice(i, 1);
+    }
+
+    if(player.strike1)
+    {
+        if(!gameOver)
+        {
+            if(timer % 1000 == 0)
+            {
+                policeman.pos[2] -= 1;
+                player.strike1 = false;
+                console.log("freed at last");
+                
+            }
         }
+    }
+
+    if(timer == 300)
+    {
+        policeman.pos[2] -= 0.25;
     }
 }
 
@@ -470,6 +534,8 @@ function drawScene(gl, programInfo, deltaTime) {
 
     t.drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     player.drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    policeman.drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    dog.drawObject(gl, viewMatrix, projectionMatrix, programInfo);
 
     for (var i = 0; i < tracks.length; ++i) {
         tracks[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
@@ -499,6 +565,10 @@ function drawScene(gl, programInfo, deltaTime) {
     for (var i = 0; i < hurdles.length; ++i) {
         hurdles[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
     }
+    for (var i = 0; i < coins.length; ++i) {
+        coins[i].drawObject(gl, viewMatrix, projectionMatrix, programInfo);
+    }
+
 
     var flash = (timer % 100 <= 5)
     for (var i = 0; i < walls.length; ++i) {
