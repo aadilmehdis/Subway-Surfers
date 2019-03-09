@@ -18,11 +18,11 @@ class JumpShoes {
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         // Now create an array of positions for the cube.
-        var baseWidth = 0.15;
-        var baseDepth = 0.15;
-        var topWidth = 0.15;
-        var topDepth = 0.15;
-        var height = 0.15;
+        var baseWidth = 0.25;
+        var baseDepth = 0.25;
+        var topWidth = 0.25;
+        var topDepth = 0.25;
+        var height = 0.25;
 
 
         this.minX = -baseWidth + pos[0];

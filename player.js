@@ -347,6 +347,14 @@ class Player {
     }
 
     tick(deltaTime) {
+        if(this.pos[0]>2)
+        {
+            this.pos[0] = 2;
+        }
+        if(this.pos[0]<-2)
+        {
+            this.pos[0] = -2;
+        }
         if (this.superJump) {
             this.superJumpTimer--;
             if (this.superJumpTimer < 0) {

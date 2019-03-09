@@ -247,8 +247,23 @@ function main() {
     }
 
     for (var i = 0; i < 10; ++i) {
-        jetpacks.push(new JetPack(gl, [2, -2.7, 20 * i]));
-        jumpshoes.push(new JumpShoes(gl, [-2, -2.7, 20 * i + 2]));
+
+        lane = Math.floor(Math.random() * 3)
+        var x = 0;
+        var y = 0;
+        if (lane == 0) {
+            x = 0;
+            y = 2;
+        } else if (lane == 1) {
+            x = 2;
+            y = -2;
+        } else {
+            x = -2;
+            y = 0;
+        }
+
+        jetpacks.push(new JetPack(gl, [x, -2.0, 100 * i]));
+        jumpshoes.push(new JumpShoes(gl, [y, -2.0, 100 * i + 60]));
     }
 
     for (var i = 0; i < 30; ++i) {
