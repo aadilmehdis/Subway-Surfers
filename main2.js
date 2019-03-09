@@ -2,6 +2,9 @@ var eye = [0, -1.6, 0];
 var target = [0, 0, 2000];
 var up = [0, 1, 0];
 
+var sound = new Audio('mainTheme.m4a');
+var playFlag = false;
+
 var player;
 var policeman;
 var dog;
@@ -197,6 +200,18 @@ Mousetrap.bind('g', function () {
     }
 });
 
+Mousetrap.bind('p', function () {
+    if (!playFlag) {
+        sound.play();
+        playFlag = true;
+    } else {
+        sound.pause();
+        // sound.currentTime = 0;
+        playFlag = false;
+    }
+
+});
+
 
 
 
@@ -331,16 +346,12 @@ function main() {
 
         tick(deltaTime);
         drawScene(gl, programInfo, deltaTime);
-        document.getElementById("Score").innerHTML = "Score: "+score;
-        if (gameOver) 
-        {
-            if(gameWon)
-            {
+        document.getElementById("Score").innerHTML = "Score: " + score;
+        if (gameOver) {
+            if (gameWon) {
                 document.getElementById("Win").style.display = "block";
                 document.getElementById("Win").innerHTML = "Game Won";
-            }
-            else
-            {
+            } else {
                 document.getElementById("Win").style.display = "block";
                 document.getElementById("Win").innerHTML = "Game Lost";
             }
@@ -442,20 +453,19 @@ function tick(deltaTime) {
         if (intersect(player, jetpacks[i])) {
             jetpacks.splice(i, 1);
             player.jetPack = true;
-            var f = player.pos[2]+5;
+            var f = player.pos[2] + 5;
 
-            for(var j=0;j < 20;++j)
-            {   
+            for (var j = 0; j < 20; ++j) {
                 var pos = [];
                 var lane = Math.floor(Math.random() * 3)
                 if (lane == 0) pos.push(0);
                 else if (lane == 1) pos.push(2);
                 else pos.push(-2);
-        
+
                 pos.push(3.0);
-        
+
                 pos.push(5 * j);
-        
+
                 coins.push(new Coin(gl, pos));
             }
         } else {
@@ -470,7 +480,7 @@ function tick(deltaTime) {
     for (var i = 0; i < coins.length; ++i) {
 
         coins[i].tick(deltaTime);
-        if (intersect( player,coins[i])) {
+        if (intersect(player, coins[i])) {
             coins.splice(i, 1);
             score += 1;
         }
@@ -772,4 +782,3 @@ function intersect(a, b) {
         (a.minY <= b.maxY && a.maxY >= b.minY) &&
         (a.minZ <= b.maxZ && a.maxZ >= b.minZ);
 }
-
