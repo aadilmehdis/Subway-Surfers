@@ -1,12 +1,12 @@
-class JetPack {
+class FinishLine {
 
     constructor(gl, pos) {
         this.speed = [0, 0, -0.3];
         this.pos = pos;
         this.rotate = 0;
-        this.rotationSpeed = 0.05;
+        this.rotationSpeed = 1;
 
-        this.texture = loadTexture(gl, 'jp.jpeg');
+        this.texture = loadTexture(gl, './assets/finish.jpg');
 
         // Create a buffer for the cube's vertex positions.
 
@@ -18,11 +18,11 @@ class JetPack {
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         // Now create an array of positions for the cube.
-        var baseWidth = 0.25;
-        var baseDepth = 0.25;
-        var topWidth = 0.25;
-        var topDepth = 0.25;
-        var height = 0.25;
+        var baseWidth = 3;
+        var baseDepth = 0.15;
+        var topWidth = 3;
+        var topDepth = 0.15;
+        var height = 0.35;
 
 
         this.minX = -baseWidth + pos[0];
@@ -42,9 +42,9 @@ class JetPack {
 
             // Back face
             -baseWidth, -height, -baseDepth,
-            -topWidth, height, -topDepth,
+            topWidth, -height, -topDepth,
             topWidth, height, -topDepth,
-            baseWidth, -height, -baseDepth,
+            -baseWidth, height, -baseDepth,
 
             // Top face
             -topWidth, height, -topDepth,
@@ -69,6 +69,82 @@ class JetPack {
             -baseWidth, -height, baseDepth,
             -topWidth, height, topDepth,
             -topWidth, height, -topDepth,
+
+
+            // Front face
+            -0.1 + baseWidth - 0.1, -height * 2 - 0.65, 0.1,
+            0.1 + baseWidth - 0.1, -height * 2 - 0.65, 0.1,
+            0.1 + baseWidth - 0.1, height * 2 - 0.65, 0.1,
+            -0.1 + baseWidth - 0.1, height * 2 - 0.65, 0.1,
+
+            // Back face
+            -0.1 + baseWidth - 0.1, -height * 2 - 0.65, -0.1,
+            0.1 + baseWidth - 0.1, -height * 2 - 0.65, -0.1,
+            0.1 + baseWidth - 0.1, height * 2 - 0.65, -0.1,
+            -0.1 + baseWidth - 0.1, height * 2 - 0.65, -0.1,
+
+            // Top face
+            -0.1 + baseWidth - 0.1, height * 2 - 0.65, -0.1,
+            0.1 + baseWidth - 0.1, height * 2 - 0.65, -0.1,
+            0.1 + baseWidth - 0.1, height * 2 - 0.65, 0.1,
+            -0.1 + baseWidth - 0.1, height * 2 - 0.65, 0.1,
+
+            // Bottom face
+            -0.1 + baseWidth - 0.1, -height * 2 - 0.65, -0.1,
+            0.1 + baseWidth - 0.1, -height * 2 - 0.65, -0.1,
+            0.1 + baseWidth - 0.1, -height * 2 - 0.65, 0.1,
+            -0.1 + baseWidth - 0.1, -height * 2 - 0.65, 0.1,
+
+            // Right face
+            0.1 + baseWidth - 0.1, -height * 2 - 0.65, -0.1,
+            0.1 + baseWidth - 0.1, height * 2 - 0.65, -0.1,
+            0.1 + baseWidth - 0.1, height * 2 - 0.65, 0.1,
+            0.1 + baseWidth - 0.1, -height * 2 - 0.65, 0.1,
+
+            // Left face
+            -0.1 + baseWidth - 0.1, -height * 2 - 0.65, -0.1,
+            -0.1 + baseWidth - 0.1, -height * 2 - 0.65, 0.1,
+            -0.1 + baseWidth - 0.1, height * 2 - 0.65, 0.1,
+            -0.1 + baseWidth - 0.1, height * 2 - 0.65, -0.1,
+
+
+            // Front face
+            -0.1 - baseWidth + 0.1, -height * 2 - 0.65, 0.1,
+            0.1 - baseWidth + 0.1, -height * 2 - 0.65, 0.1,
+            0.1 - baseWidth + 0.1, height * 2 - 0.65, 0.1,
+            -0.1 - baseWidth + 0.1, height * 2 - 0.65, 0.1,
+
+            // Back face
+            -0.1 - baseWidth + 0.1, -height * 2 - 0.65, -0.1,
+            0.1 - baseWidth + 0.1, -height * 2 - 0.65, -0.1,
+            0.1 - baseWidth + 0.1, height * 2 - 0.65, -0.1,
+            -0.1 - baseWidth + 0.1, height * 2 - 0.65, -0.1,
+
+            // Top face
+            -0.1 - baseWidth + 0.1, height * 2 - 0.65, -0.1,
+            0.1 - baseWidth + 0.1, height * 2 - 0.65, -0.1,
+            0.1 - baseWidth + 0.1, height * 2 - 0.65, 0.1,
+            -0.1 - baseWidth + 0.1, height * 2 - 0.65, 0.1,
+
+            // Bottom face
+            -0.1 - baseWidth + 0.1, -height * 2 - 0.65, -0.1,
+            0.1 - baseWidth + 0.1, -height * 2 - 0.65, -0.1,
+            0.1 - baseWidth + 0.1, -height * 2 - 0.65, 0.1,
+            -0.1 - baseWidth + 0.1, -height * 2 - 0.65, 0.1,
+
+            // Right face
+            0.1 - baseWidth + 0.1, -height * 2 - 0.65, -0.1,
+            0.1 - baseWidth + 0.1, height * 2 - 0.65, -0.1,
+            0.1 - baseWidth + 0.1, height * 2 - 0.65, 0.1,
+            0.1 - baseWidth + 0.1, -height * 2 - 0.65, 0.1,
+
+            // Left face
+            -0.1 - baseWidth + 0.1, -height * 2 - 0.65, -0.1,
+            -0.1 - baseWidth + 0.1, -height * 2 - 0.65, 0.1,
+            -0.1 - baseWidth + 0.1, height * 2 - 0.65, 0.1,
+            -0.1 - baseWidth + 0.1, height * 2 - 0.65, -0.1,
+
+
         ];
         // Now pass the list of positions into WebGL to build the
         // shape. We do this by creating a Float32Array from the
@@ -118,6 +194,80 @@ class JetPack {
             1.0, 1.0, 0.0,
             0.0, 1.0, 0.0,
 
+
+            // Front
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Back
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Top
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Bottom
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Right
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Left
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+
+            // Front
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Back
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Top
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Bottom
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Right
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
+            // Left
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals),
@@ -130,15 +280,15 @@ class JetPack {
 
         const textureCoordinates = [
             // Front
-            1.0, 1.0,
-            0.0, 1.0,
             0.0, 0.0,
             1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             // Back
-            0.0, 1.0,
             0.0, 0.0,
             1.0, 0.0,
             1.0, 1.0,
+            0.0, 1.0,
             // Top
             0.0, 0.0,
             1.0, 0.0,
@@ -150,15 +300,79 @@ class JetPack {
             1.0, 1.0,
             0.0, 1.0,
             // Right
-            0.0, 1.0,
             0.0, 0.0,
             1.0, 0.0,
             1.0, 1.0,
+            0.0, 1.0,
             // Left
-            1.0, 1.0,
-            0.0, 1.0,
             0.0, 0.0,
             1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+
+            // Front
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Back
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Top
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Bottom
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Right
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Left
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+
+
+            // Front
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Back
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Top
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Bottom
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Right
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
+            // Left
+            0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
@@ -181,6 +395,22 @@ class JetPack {
             12, 13, 14, 12, 14, 15, // bottom
             16, 17, 18, 16, 18, 19, // right
             20, 21, 22, 20, 22, 23, // left
+
+            48, 49, 50, 48, 50, 51, // front
+            52, 53, 54, 52, 54, 55, // back
+            56, 57, 58, 56, 58, 59, // top
+            60, 61, 62, 60, 62, 63, // bottom
+            64, 65, 66, 64, 66, 67, // right
+            68, 69, 70, 68, 70, 71, // left
+
+
+            24, 25, 26, 24, 26, 27, // front
+            28, 29, 30, 28, 30, 31, // back
+            32, 33, 34, 32, 34, 35, // top
+            36, 47, 38, 36, 38, 39, // bottom
+            40, 51, 42, 40, 42, 43, // right
+            44, 55, 46, 44, 46, 47, // left
+
         ];
 
         // Now send the element array to GL
@@ -217,7 +447,7 @@ class JetPack {
 
         mat4.rotate(modelMatrix, // destination matrix
             modelMatrix, // matrix to rotate
-            this.rotate, // amount to rotate in radians
+            Math.PI, // amount to rotate in radians
             [0, 1, 0]); // axis to rotate around (Z)
 
 
@@ -323,7 +553,7 @@ class JetPack {
         gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
         {
-            const vertexCount = 36;
+            const vertexCount = 80;
             const type = gl.UNSIGNED_SHORT;
             const offset = 0;
             gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
@@ -331,6 +561,6 @@ class JetPack {
     }
 
     tick(deltaTime) {
-        this.rotate += this.rotationSpeed;;
+        ;
     }
 }

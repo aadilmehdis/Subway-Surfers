@@ -1,11 +1,11 @@
-class Sky {
+class Coin {
 
-    constructor(gl, pos) {
+    constructor(gl, pos, depth) {
         this.pos = pos;
         this.rotate = 0;
         this.rotationSpeed = 1;
 
-        this.texture = loadTexture(gl, 'sky.jpeg');
+        this.texture = loadTexture(gl, './assets/gold.jpg');
 
         // Create a buffer for the cube's vertex positions.
 
@@ -16,45 +16,38 @@ class Sky {
 
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-        // Now create an array of positions for the cube.
+        var radius = 0.15;
 
-        const positions = [
-            // Front face
-            -5.75, -0.1, 25.0,
-            5.75, -0.1, 25.0,
-            5.75, 0.1, 25.0,
-            -5.75, 0.1, 25.0,
 
-            // Back face
-            -5.75, -0.1, -25.0,
-            -5.75, 0.1, -25.0,
-            5.75, 0.1, -25.0,
-            5.75, -0.1, -25.0,
 
-            // Top face
-            -5.75, 0.1, -25.0,
-            5.75, 0.1, -25.0,
-            5.75, 0.1, 25.0,
-            -5.75, 0.1, 25.0,
+        this.minX = -radius + pos[0];
+        this.minY = -radius + pos[1];
+        this.minZ = -radius + pos[2]; 
+        this.maxX = +radius + pos[0];
+        this.maxY = +radius + pos[1];
+        this.maxZ = +radius + pos[2];
 
-            // Bottom face
-            -5.75, -0.1, -25.0,
-            5.75, -0.1, -25.0,
-            5.75, -0.1, 25.0,
-            -5.75, -0.1, 25.0,
+        var nSides = 20;
+        var theta = (2 * Math.PI) / nSides;
+        this.nSides = nSides;
 
-            // Right face
-            5.75, -0.1, -25.0,
-            5.75, 0.1, -25.0,
-            5.75, 0.1, 25.0,
-            5.75, -0.1, 25.0,
+        var positions = []
 
-            // Left face
-            -5.75, -0.1, -25.0,
-            -5.75, -0.1, 25.0,
-            -5.75, 0.1, 25.0,
-            -5.75, 0.1, -25.0,
-        ];
+
+        for (var i = 0; i < nSides; ++i) {
+            positions.push(0);
+            positions.push(0);
+            positions.push(0);
+
+            positions.push(radius * Math.cos(theta * i));
+            positions.push(radius * Math.sin(theta * i));
+            positions.push(0);
+
+            positions.push(radius * Math.cos(theta * (i + 1)));
+            positions.push(radius * Math.sin(theta * (i + 1)));
+            positions.push(0);
+
+        }
 
         // Now pass the list of positions into WebGL to build the
         // shape. We do this by creating a Float32Array from the
@@ -67,45 +60,13 @@ class Sky {
         const normalBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, normalBuffer);
 
-        const vertexNormals = [
-            // Front
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
+        var vertexNormals = []
 
-            // Back
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-
-
-
-            // Bottom
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
-
-            // Top
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-
-            // Right
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-
-            // Left
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0
-        ];
+        for (var i = 0; i < 3 * nSides; ++i) {
+            vertexNormals.push(0.0)
+            vertexNormals.push(0.0)
+            vertexNormals.push(-1.0)
+        }
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals),
             gl.STATIC_DRAW);
@@ -115,44 +76,13 @@ class Sky {
         const textureCoordBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
 
-        const textureCoordinates = [
+        var textureCoordinates = []
 
-            // Front
-
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-            0.0, 0.0,
-            // Back
-
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-            0.0, 0.0,
-            // Top
-
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-            0.0, 0.0,
-            // Bottom
-
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-            0.0, 0.0,
-            // Right
-
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-            0.0, 0.0,
-            // Left
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
-            0.0, 0.0,
-        ];
+        for (var i = 0; i < nSides; ++i) {
+            textureCoordinates.push(0.0, 0.0);
+            textureCoordinates.push(0.5, 0.0);
+            textureCoordinates.push(0.5, 0.5);
+        }
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
             gl.STATIC_DRAW);
@@ -167,14 +97,25 @@ class Sky {
         // indices into the vertex array to specify each triangle's
         // position.
 
-        const indices = [
-            0, 1, 2, 0, 2, 3, // front
-            4, 5, 6, 4, 6, 7, // back
-            8, 9, 10, 8, 10, 11, // top
-            12, 13, 14, 12, 14, 15, // bottom
-            16, 17, 18, 16, 18, 19, // right
-            20, 21, 22, 20, 22, 23, // left
-        ];
+        var indices = []
+
+
+        for (var i = 0; i < positions.length / 3; ++i) {
+            indices.push(i);
+        }
+
+        // const indices = [
+        //     0, 1, 2, 0, 2, 3, // front
+        //     4, 5, 6, 4, 6, 7, // back
+        //     8, 9, 10, 8, 10, 11, // top
+        //     12, 13, 14, 12, 14, 15, // bottom
+        //     16, 17, 18, 16, 18, 19, // right
+        //     20, 21, 22, 20, 22, 23, // left
+        //     24, 25, 26 , 24, 26, 27,
+        //     28, 29,30,28,30,31,
+        //     32,33,34,32,34,35,
+        //     36,37,38,36,38,39,
+        // ];
 
         // Now send the element array to GL
 
@@ -191,6 +132,7 @@ class Sky {
 
 
     drawObject(gl, viewMatrix, projectionMatrix, programInfo) {
+
         // Set the drawing position to the "identity" point, which is
         // the center of the scene.
         const modelMatrix = mat4.create();
@@ -202,10 +144,10 @@ class Sky {
             modelMatrix, // matrix to translate
             this.pos); // amount to translate
 
-        mat4.rotate(modelMatrix, // destination matrix
-            modelMatrix, // matrix to rotate
-            Math.PI, // amount to rotate in radians
-            [1, 0, 0]); // axis to rotate around (Z)
+        // mat4.rotate(modelMatrix,  // destination matrix
+        //               modelMatrix,  // matrix to rotate
+        //               this.rotate,     // amount to rotate in radians
+        //               [0, 0, 1]);       // axis to rotate around (Z)
 
 
         // mat4.rotate(modelMatrix,  // destination matrix
@@ -316,7 +258,7 @@ class Sky {
         gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
         {
-            const vertexCount = 36;
+            const vertexCount = 3 * this.nSides;
             const type = gl.UNSIGNED_SHORT;
             const offset = 0;
             gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);

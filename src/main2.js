@@ -2,7 +2,7 @@ var eye = [0, -1.6, 0];
 var target = [0, 0, 2000];
 var up = [0, 1, 0];
 
-var sound = new Audio('mainTheme.m4a');
+var sound = new Audio('./assets/mainTheme.m4a');
 var playFlag = false;
 
 var player;
@@ -230,20 +230,20 @@ function main() {
     keyBindings();
 
     {
-        trains.push(new Train(gl, [0, -2, 100], 5, 'cargo1.jpg'));
-        trains.push(new Train(gl, [2, -2, 300], 5, 'cargo2.png'));
-        trains.push(new Train(gl, [-2, -2, 400], 5, 'cargo3.png'));
+        trains.push(new Train(gl, [0, -2, 100], 5, './assets/cargo1.jpg'));
+        trains.push(new Train(gl, [2, -2, 300], 5, './assets/cargo2.png'));
+        trains.push(new Train(gl, [-2, -2, 400], 5, './assets/cargo3.png'));
 
-        trains.push(new Train(gl, [0, -2, 600], 5, 'cargo4.png'));
-        trains.push(new Train(gl, [2, -2, 700], 5, 'cargo3.png'));
-        trains.push(new Train(gl, [-2, -2, 800], 5, 'cargo2.png'));
+        trains.push(new Train(gl, [0, -2, 600], 5, './assets/cargo4.png'));
+        trains.push(new Train(gl, [2, -2, 700], 5, './assets/cargo3.png'));
+        trains.push(new Train(gl, [-2, -2, 800], 5, './assets/cargo2.png'));
 
-        trains.push(new Train(gl, [0, -2, 900], 5, 'cargo1.jpg'));
-        trains.push(new Train(gl, [2, -2, 1000], 5, 'cargo2.png'));
+        trains.push(new Train(gl, [0, -2, 900], 5, './assets/cargo1.jpg'));
+        trains.push(new Train(gl, [2, -2, 1000], 5, './assets/cargo2.png'));
 
-        trains.push(new Train(gl, [-2, -2, 650], 5, 'cargo4.png'));
-        trains.push(new Train(gl, [0, -2, 750], 5, 'cargo3.png'));
-        trains.push(new Train(gl, [2, -2, 850], 5, 'cargo2.png'));
+        trains.push(new Train(gl, [-2, -2, 650], 5, './assets/cargo4.png'));
+        trains.push(new Train(gl, [0, -2, 750], 5, './assets/cargo3.png'));
+        trains.push(new Train(gl, [2, -2, 850], 5, './assets/cargo2.png'));
     }
 
     for (var i = 0; i < 10; ++i) {
@@ -479,7 +479,7 @@ function tick(deltaTime) {
 
                 pos.push(3.0);
 
-                pos.push(5 * j);
+                pos.push(5 * j + player.pos[2] + 3);
 
                 coins.push(new Coin(gl, pos));
             }

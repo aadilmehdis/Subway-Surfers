@@ -1,11 +1,11 @@
-class Tree {
+class Track {
 
-    constructor(gl, pos, depth) {
+    constructor(gl, pos) {
         this.pos = pos;
         this.rotate = 0;
         this.rotationSpeed = 1;
 
-        this.texture = loadTexture(gl, 'tree.jpg');
+        this.texture = loadTexture(gl, './assets/track.jpg');
 
         // Create a buffer for the cube's vertex positions.
 
@@ -16,101 +16,46 @@ class Tree {
 
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
-        // var nSides = 100;
-        // var radius = 2;
-        // var x = 0;
-        // var y = radius;
-        // var theta = 2 * Math.PI / nSides;
-        // var sinTheta = Math.sin(theta);
-        // var cosTheta = Math.cos(theta);
-
-        // var positions = []
-        // positions.push(0);
-        // positions.push(0);
-        // positions.push(0);
-
-        // positions.push(0);
-        // positions.push(2);
-        // positions.push(0);
-
-        // for(var i=0; i < nSides ;++i)
-        // {
-        //     var tempX = x*cosTheta + y*sinTheta;
-        //     var tempY = y*cosTheta - x*sinTheta;
-        //     positions.push(tempX);
-        //     positions.push(tempY);
-        //     positions.push(0);
-        //     x = tempX;
-        //     y = tempY;
-        // }
-
         // Now create an array of positions for the cube.
-        var baseWidth = 0.6;
-        var baseDepth = 0.6;
-        var topWidth = 0.6;
-        var topDepth = 0;
-        var height = 2;
-
 
         const positions = [
             // Front face
-            -baseWidth, -height, baseDepth,
-            baseWidth, -height, baseDepth,
-            0, height, 0,
-            -0, height, 0,
+            -3.0, -0.1, 10.0,
+            3.0, -0.1, 10.0,
+            3.0, 0.1, 10.0,
+            -3.0, 0.1, 10.0,
 
             // Back face
-            -baseWidth, -height, -baseDepth,
-            -0, height, -0,
-            0, height, -0,
-            baseWidth, -height, -baseDepth,
+            -3.0, -0.1, -10.0,
+            -3.0, 0.1, -10.0,
+            3.0, 0.1, -10.0,
+            3.0, -0.1, -10.0,
 
             // Top face
-            0, height, 0,
-            0, height, 0,
-            0, height, 0,
-            0, height, 0,
+            -3.0, 0.1, 10.0,
+            -3.0, 0.1, -10.0,
+            3.0, 0.1, 10.0,
+            3.0, 0.1, -10.0,
 
             // Bottom face
-            -baseWidth, -height, -baseDepth,
-            baseWidth, -height, -baseDepth,
-            baseWidth, -height, baseDepth,
-            -baseWidth, -height, baseDepth,
+            -3.0, -0.1, -10.0,
+            3.0, -0.1, -10.0,
+            3.0, -0.1, 10.0,
+            -3.0, -0.1, 10.0,
 
             // Right face
-            baseWidth, -height, -baseDepth,
-            0, height, -0,
-            0, height, 0,
-            baseWidth, -height, baseDepth,
+            3.0, -0.1, -10.0,
+            3.0, 0.1, -10.0,
+            3.0, 0.1, 10.0,
+            3.0, -0.1, 10.0,
 
             // Left face
-            -baseWidth, -height, -baseDepth,
-            -baseWidth, -height, baseDepth,
-            -0, height, 0,
-            -0, height, -0,
-
-
-            -0.25, -3.5, 0.25,
-            0.25, -3.5, 0.25,
-            0.25,0, 0.25,
-            -0.25,0, 0.25,
-
-            -0.25, -3.5, -0.25,
-            0.25, -3.5, -0.25,
-            0.25,0, -0.25,
-            -0.25,0, -0.25,
-
-            0.25, -3.5, -0.25,
-            0.25, -3.5, 0.25,
-            0.25,0, 0.25,
-            0.25,0, -0.25,
-
-            -0.25, -3.5, -0.25,
-            -0.25, -3.5, 0.25,
-            -0.25,0, 0.25,
-            -0.25,0, -0.25,
-
+            -3.0, -0.1, -10.0,
+            -3.0, -0.1, 10.0,
+            -3.0, 0.1, 10.0,
+            -3.0, 0.1, -10.0,
         ];
+
         // Now pass the list of positions into WebGL to build the
         // shape. We do this by creating a Float32Array from the
         // JavaScript array, then use it to fill the current buffer.
@@ -157,31 +102,7 @@ class Tree {
             -1.0, 0.0, 0.0,
             -1.0, 0.0, 0.0,
             -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-
-            // Front
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-
-            // Back
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-
-            // Right
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-
-            // Left
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
+            -1.0, 0.0, 0.0
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals),
@@ -193,58 +114,42 @@ class Tree {
         gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
 
         const textureCoordinates = [
+
             // Front
+
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             0.0, 0.0,
-            0.5, 0.0,
-            0.5, 0.5,
-            0.0, 0.5,
             // Back
+
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             0.0, 0.0,
-            0.5, 0.0,
-            0.5, 0.5,
-            0.0, 0.5,
             // Top
+
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             0.0, 0.0,
-            0.5, 0.0,
-            0.5, 0.5,
-            0.0, 0.5,
             // Bottom
+
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             0.0, 0.0,
-            0.5, 0.0,
-            0.5, 0.5,
-            0.0, 0.5,
             // Right
+
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             0.0, 0.0,
-            0.5, 0.0,
-            0.5, 0.5,
-            0.0, 0.5,
             // Left
+            1.0, 0.0,
+            1.0, 1.0,
+            0.0, 1.0,
             0.0, 0.0,
-            0.5, 0.0,
-            0.5, 0.5,
-            0.0, 0.5,
-
-            0.8, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.8, 1.0,
-            
-            0.8, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.8, 1.0,
-
-            0.8, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.8, 1.0,
-
-            0.8, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.8, 1.0,
-
-
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
@@ -267,10 +172,6 @@ class Tree {
             12, 13, 14, 12, 14, 15, // bottom
             16, 17, 18, 16, 18, 19, // right
             20, 21, 22, 20, 22, 23, // left
-            24, 25, 26 , 24, 26, 27,
-            28, 29,30,28,30,31,
-            32,33,34,32,34,35,
-            36,37,38,36,38,39,
         ];
 
         // Now send the element array to GL
@@ -288,7 +189,6 @@ class Tree {
 
 
     drawObject(gl, viewMatrix, projectionMatrix, programInfo) {
-
         // Set the drawing position to the "identity" point, which is
         // the center of the scene.
         const modelMatrix = mat4.create();
@@ -300,10 +200,10 @@ class Tree {
             modelMatrix, // matrix to translate
             this.pos); // amount to translate
 
-        // mat4.rotate(modelMatrix,  // destination matrix
-        //               modelMatrix,  // matrix to rotate
-        //               this.rotate,     // amount to rotate in radians
-        //               [0, 0, 1]);       // axis to rotate around (Z)
+        mat4.rotate(modelMatrix, // destination matrix
+            modelMatrix, // matrix to rotate
+            Math.PI, // amount to rotate in radians
+            [1, 0, 0]); // axis to rotate around (Z)
 
 
         // mat4.rotate(modelMatrix,  // destination matrix
@@ -414,7 +314,7 @@ class Tree {
         gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
         {
-            const vertexCount = 40;
+            const vertexCount = 36;
             const type = gl.UNSIGNED_SHORT;
             const offset = 0;
             gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);

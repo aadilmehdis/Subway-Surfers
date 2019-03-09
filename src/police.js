@@ -1,12 +1,15 @@
-class Crate {
+class Police {
 
     constructor(gl, pos) {
-        this.speed = [0, 0, -0.3];
+        this.initSpeed = [0, 0, 0.15];
+        this.speed = [0, 0, 0];
+        this.gravity = [0, -0.01, 0];
         this.pos = pos;
         this.rotate = 0;
         this.rotationSpeed = 1;
 
-        this.texture = loadTexture(gl, 'crate.jpeg');
+
+        this.texture = loadTexture(gl, './assets/policeman.jpg');
 
         // Create a buffer for the cube's vertex positions.
 
@@ -18,15 +21,23 @@ class Crate {
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         // Now create an array of positions for the cube.
-        var baseWidth = 0.35;
-        var baseDepth = 0.35;
-        var topWidth = 0.35;
-        var topDepth = 0.35;
-        var height = 0.35;
+        var baseWidth = 0.25;
+        var baseDepth = 0.01;
+        var topWidth = 0.25;
+        var topDepth = 0.01;
+        var height = 0.4;
+
+        this.baseWidth = baseWidth;
+        this.baseDepth = baseDepth;
+        this.topWidth = topWidth;
+        this.topDepth = topDepth;
+        this.height = height;
+
+
 
         this.minX = -baseWidth + pos[0];
         this.minY = -height + pos[1];
-        this.minZ = -baseDepth + pos[2]; 
+        this.minZ = -baseDepth + pos[2];
         this.maxX = +topWidth + pos[0];
         this.maxY = +height + pos[1];
         this.maxZ = +topDepth + pos[2];
@@ -129,15 +140,15 @@ class Crate {
 
         const textureCoordinates = [
             // Front
-            0.0, 0.0,
-            1.0, 0.0,
             1.0, 1.0,
             0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
             // Back
+            0.0, 1.0,
             0.0, 0.0,
             1.0, 0.0,
             1.0, 1.0,
-            0.0, 1.0,
             // Top
             0.0, 0.0,
             1.0, 0.0,
@@ -149,15 +160,15 @@ class Crate {
             1.0, 1.0,
             0.0, 1.0,
             // Right
+            0.0, 1.0,
             0.0, 0.0,
             1.0, 0.0,
             1.0, 1.0,
-            0.0, 1.0,
             // Left
-            0.0, 0.0,
-            1.0, 0.0,
             1.0, 1.0,
             0.0, 1.0,
+            0.0, 0.0,
+            1.0, 0.0,
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
@@ -330,6 +341,17 @@ class Crate {
     }
 
     tick(deltaTime) {
-        ;
+        if (this.speed[2] < 0.15) {
+            this.speed[2] += 0.02;
+            if(this.speed[2] > 0.15) this.speed[2] = 0.15;
+        }
+
+        vec3.add(this.pos, this.pos, this.speed);
+        this.minX = this.pos[0] - this.baseWidth;
+        this.minY = this.pos[1] - this.height;
+        this.minZ = this.pos[2] - this.baseDepth;
+        this.maxX = this.pos[0] + this.topWidth;
+        this.maxY = this.pos[1] + this.height;
+        this.maxZ = this.pos[2] + this.topDepth;
     }
 }

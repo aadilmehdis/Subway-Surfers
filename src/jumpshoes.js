@@ -1,11 +1,12 @@
-class Pavement {
+class JumpShoes {
 
     constructor(gl, pos) {
+        this.speed = [0, 0, -0.3];
         this.pos = pos;
         this.rotate = 0;
-        this.rotationSpeed = 1;
+        this.rotationSpeed = 0.05;
 
-        this.texture = loadTexture(gl, 'greengrass.jpg');
+        this.texture = loadTexture(gl, './assets/jumpshoes.jpg');
 
         // Create a buffer for the cube's vertex positions.
 
@@ -17,45 +18,58 @@ class Pavement {
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
         // Now create an array of positions for the cube.
+        var baseWidth = 0.25;
+        var baseDepth = 0.25;
+        var topWidth = 0.25;
+        var topDepth = 0.25;
+        var height = 0.25;
+
+
+        this.minX = -baseWidth + pos[0];
+        this.minY = -height + pos[1];
+        this.minZ = -baseDepth + pos[2]; 
+        this.maxX = +topWidth + pos[0];
+        this.maxY = +height + pos[1];
+        this.maxZ = +topDepth + pos[2];
+
 
         const positions = [
             // Front face
-            -5.75, -0.1, 25.0,
-            5.75, -0.1, 25.0,
-            5.75, 0.1, 25.0,
-            -5.75, 0.1, 25.0,
+            -baseWidth, -height, baseDepth,
+            baseWidth, -height, baseDepth,
+            topWidth, height, topDepth,
+            -topWidth, height, topDepth,
 
             // Back face
-            -5.75, -0.1, -25.0,
-            -5.75, 0.1, -25.0,
-            5.75, 0.1, -25.0,
-            5.75, -0.1, -25.0,
+            -baseWidth, -height, -baseDepth,
+            -topWidth, height, -topDepth,
+            topWidth, height, -topDepth,
+            baseWidth, -height, -baseDepth,
 
             // Top face
-            -5.75, 0.1, 25.0,
-            -5.75, 0.1, -25.0,
-            5.75, 0.1, 25.0,
-            5.75, 0.1, -25.0,
+            -topWidth, height, -topDepth,
+            topWidth, height, -topDepth,
+            topWidth, height, topDepth,
+            -topWidth, height, topDepth,
 
             // Bottom face
-            -5.75, -0.1, -25.0,
-            5.75, -0.1, -25.0,
-            5.75, -0.1, 25.0,
-            -5.75, -0.1, 25.0,
+            -baseWidth, -height, -baseDepth,
+            baseWidth, -height, -baseDepth,
+            baseWidth, -height, baseDepth,
+            -baseWidth, -height, baseDepth,
 
             // Right face
-            5.75, -0.1, -25.0,
-            5.75, 0.1, -25.0,
-            5.75, 0.1, 25.0,
-            5.75, -0.1, 25.0,
+            baseWidth, -height, -baseDepth,
+            topWidth, height, -topDepth,
+            topWidth, height, topDepth,
+            baseWidth, -height, baseDepth,
 
             // Left face
-            -5.75, -0.1, -25.0,
-            -5.75, -0.1, 25.0,
-            -5.75, 0.1, 25.0,
-            -5.75, 0.1, -25.0,
+            -baseWidth, -height, -baseDepth,
+            -baseWidth, -height, baseDepth,
+            -topWidth, height, topDepth,
+            -topWidth, height, -topDepth,
         ];
-
         // Now pass the list of positions into WebGL to build the
         // shape. We do this by creating a Float32Array from the
         // JavaScript array, then use it to fill the current buffer.
@@ -69,40 +83,41 @@ class Pavement {
 
         const vertexNormals = [
             // Front
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
-            0.0, 0.0, 1.0,
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
 
             // Back
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
-            0.0, 0.0, -1.0,
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
 
             // Top
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
             0.0, 1.0, 0.0,
 
             // Bottom
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
-            0.0, -1.0, 0.0,
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
 
             // Right
+            0.0, 0.0, 0.0,
             1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
 
             // Left
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0,
-            -1.0, 0.0, 0.0
+            0.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals),
@@ -114,42 +129,37 @@ class Pavement {
         gl.bindBuffer(gl.ARRAY_BUFFER, textureCoordBuffer);
 
         const textureCoordinates = [
-
             // Front
-
-            1.0, 0.0,
             1.0, 1.0,
             0.0, 1.0,
             0.0, 0.0,
+            1.0, 0.0,
             // Back
-
-            1.0, 0.0,
-            1.0, 1.0,
             0.0, 1.0,
             0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
             // Top
-
+            0.0, 0.0,
             1.0, 0.0,
             1.0, 1.0,
             0.0, 1.0,
-            0.0, 0.0,
             // Bottom
-
+            0.0, 0.0,
             1.0, 0.0,
             1.0, 1.0,
             0.0, 1.0,
-            0.0, 0.0,
             // Right
-
-            1.0, 0.0,
-            1.0, 1.0,
             0.0, 1.0,
             0.0, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
             // Left
-            1.0, 0.0,
             1.0, 1.0,
             0.0, 1.0,
             0.0, 0.0,
+            1.0, 0.0,
+
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
@@ -200,16 +210,16 @@ class Pavement {
             modelMatrix, // matrix to translate
             this.pos); // amount to translate
 
+        // mat4.rotate(modelMatrix,  // destination matrix
+        //               modelMatrix,  // matrix to rotate
+        //               this.rotate,     // amount to rotate in radians
+        //               [0, 0, 1]);       // axis to rotate around (Z)
+
+
         mat4.rotate(modelMatrix, // destination matrix
             modelMatrix, // matrix to rotate
-            Math.PI, // amount to rotate in radians
-            [1, 0, 0]); // axis to rotate around (Z)
-
-
-        // mat4.rotate(modelMatrix,  // destination matrix
-        //                 modelMatrix,  // matrix to rotate
-        //                 this.rotate,     // amount to rotate in radians
-        //                 [0, 1, 0]);       // axis to rotate around (Z)
+            this.rotate, // amount to rotate in radians
+            [0, 1, 0]); // axis to rotate around (Z)
 
 
         const modelViewMatrix = mat4.create();
@@ -322,6 +332,6 @@ class Pavement {
     }
 
     tick(deltaTime) {
-        this.rotate = this.rotate + this.rotationSpeed * deltaTime
+        this.rotate += this.rotationSpeed;;
     }
 }

@@ -1,21 +1,11 @@
-class Player {
+class Tree {
 
-    constructor(gl, pos) {
-        this.initSpeed = [0, 0, 0.15];
-        this.speed = [0, 0, 0.15];
-        this.gravity = [0, -0.01, 0];
+    constructor(gl, pos, depth) {
         this.pos = pos;
         this.rotate = 0;
         this.rotationSpeed = 1;
-        this.is_jump = false;
-        this.superJump = false;
-        this.superJumpTimer = 250;
-        this.jetPack = false;
-        this.jetPackTimer = 250;
-        this.strike1 = false;
-        this.strike2 = false;
 
-        this.texture = loadTexture(gl, 'player.jpg');
+        this.texture = loadTexture(gl, './assets/tree.jpg');
 
         // Create a buffer for the cube's vertex positions.
 
@@ -26,47 +16,60 @@ class Player {
 
         gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 
+        // var nSides = 100;
+        // var radius = 2;
+        // var x = 0;
+        // var y = radius;
+        // var theta = 2 * Math.PI / nSides;
+        // var sinTheta = Math.sin(theta);
+        // var cosTheta = Math.cos(theta);
+
+        // var positions = []
+        // positions.push(0);
+        // positions.push(0);
+        // positions.push(0);
+
+        // positions.push(0);
+        // positions.push(2);
+        // positions.push(0);
+
+        // for(var i=0; i < nSides ;++i)
+        // {
+        //     var tempX = x*cosTheta + y*sinTheta;
+        //     var tempY = y*cosTheta - x*sinTheta;
+        //     positions.push(tempX);
+        //     positions.push(tempY);
+        //     positions.push(0);
+        //     x = tempX;
+        //     y = tempY;
+        // }
+
         // Now create an array of positions for the cube.
-        var baseWidth = 0.25;
-        var baseDepth = 0.01;
-        var topWidth = 0.25;
-        var topDepth = 0.01;
-        var height = 0.4;
-
-        this.baseWidth = baseWidth;
-        this.baseDepth = baseDepth;
-        this.topWidth = topWidth;
-        this.topDepth = topDepth;
-        this.height = height;
-
-
-
-        this.minX = -baseWidth + pos[0];
-        this.minY = -height + pos[1];
-        this.minZ = -baseDepth + pos[2];
-        this.maxX = +topWidth + pos[0];
-        this.maxY = +height + pos[1];
-        this.maxZ = +topDepth + pos[2];
+        var baseWidth = 0.6;
+        var baseDepth = 0.6;
+        var topWidth = 0.6;
+        var topDepth = 0;
+        var height = 2;
 
 
         const positions = [
             // Front face
             -baseWidth, -height, baseDepth,
             baseWidth, -height, baseDepth,
-            topWidth, height, topDepth,
-            -topWidth, height, topDepth,
+            0, height, 0,
+            -0, height, 0,
 
             // Back face
             -baseWidth, -height, -baseDepth,
-            -topWidth, height, -topDepth,
-            topWidth, height, -topDepth,
+            -0, height, -0,
+            0, height, -0,
             baseWidth, -height, -baseDepth,
 
             // Top face
-            -topWidth, height, -topDepth,
-            topWidth, height, -topDepth,
-            topWidth, height, topDepth,
-            -topWidth, height, topDepth,
+            0, height, 0,
+            0, height, 0,
+            0, height, 0,
+            0, height, 0,
 
             // Bottom face
             -baseWidth, -height, -baseDepth,
@@ -76,15 +79,37 @@ class Player {
 
             // Right face
             baseWidth, -height, -baseDepth,
-            topWidth, height, -topDepth,
-            topWidth, height, topDepth,
+            0, height, -0,
+            0, height, 0,
             baseWidth, -height, baseDepth,
 
             // Left face
             -baseWidth, -height, -baseDepth,
             -baseWidth, -height, baseDepth,
-            -topWidth, height, topDepth,
-            -topWidth, height, -topDepth,
+            -0, height, 0,
+            -0, height, -0,
+
+
+            -0.25, -3.5, 0.25,
+            0.25, -3.5, 0.25,
+            0.25,0, 0.25,
+            -0.25,0, 0.25,
+
+            -0.25, -3.5, -0.25,
+            0.25, -3.5, -0.25,
+            0.25,0, -0.25,
+            -0.25,0, -0.25,
+
+            0.25, -3.5, -0.25,
+            0.25, -3.5, 0.25,
+            0.25,0, 0.25,
+            0.25,0, -0.25,
+
+            -0.25, -3.5, -0.25,
+            -0.25, -3.5, 0.25,
+            -0.25,0, 0.25,
+            -0.25,0, -0.25,
+
         ];
         // Now pass the list of positions into WebGL to build the
         // shape. We do this by creating a Float32Array from the
@@ -99,41 +124,64 @@ class Player {
 
         const vertexNormals = [
             // Front
-            0.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
 
             // Back
-            0.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
+            0.0, 0.0, -1.0,
+            0.0, 0.0, -1.0,
+            0.0, 0.0, -1.0,
+            0.0, 0.0, -1.0,
 
             // Top
-            0.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
+            0.0, 1.0, 0.0,
             0.0, 1.0, 0.0,
 
             // Bottom
-            0.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
+            0.0, -1.0, 0.0,
+            0.0, -1.0, 0.0,
+            0.0, -1.0, 0.0,
+            0.0, -1.0, 0.0,
 
             // Right
-            0.0, 0.0, 0.0,
             1.0, 0.0, 0.0,
-            1.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
 
             // Left
-            0.0, 0.0, 0.0,
-            1.0, 0.0, 0.0,
-            1.0, 1.0, 0.0,
-            0.0, 1.0, 0.0,
+            -1.0, 0.0, 0.0,
+            -1.0, 0.0, 0.0,
+            -1.0, 0.0, 0.0,
+            -1.0, 0.0, 0.0,
 
+            // Front
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+            0.0, 0.0, 1.0,
+
+            // Back
+            0.0, 0.0, -1.0,
+            0.0, 0.0, -1.0,
+            0.0, 0.0, -1.0,
+            0.0, 0.0, -1.0,
+
+            // Right
+            1.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+            1.0, 0.0, 0.0,
+
+            // Left
+            -1.0, 0.0, 0.0,
+            -1.0, 0.0, 0.0,
+            -1.0, 0.0, 0.0,
+            -1.0, 0.0, 0.0,
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexNormals),
@@ -147,34 +195,56 @@ class Player {
         const textureCoordinates = [
             // Front
             0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
+            0.5, 0.0,
+            0.5, 0.5,
+            0.0, 0.5,
             // Back
             0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
+            0.5, 0.0,
+            0.5, 0.5,
+            0.0, 0.5,
             // Top
             0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
+            0.5, 0.0,
+            0.5, 0.5,
+            0.0, 0.5,
             // Bottom
             0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
+            0.5, 0.0,
+            0.5, 0.5,
+            0.0, 0.5,
             // Right
             0.0, 0.0,
-            1.0, 0.0,
-            1.0, 1.0,
-            0.0, 1.0,
+            0.5, 0.0,
+            0.5, 0.5,
+            0.0, 0.5,
             // Left
             0.0, 0.0,
+            0.5, 0.0,
+            0.5, 0.5,
+            0.0, 0.5,
+
+            0.8, 0.0,
             1.0, 0.0,
             1.0, 1.0,
-            0.0, 1.0,
+            0.8, 1.0,
+            
+            0.8, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.8, 1.0,
+
+            0.8, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.8, 1.0,
+
+            0.8, 0.0,
+            1.0, 0.0,
+            1.0, 1.0,
+            0.8, 1.0,
+
+
         ];
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoordinates),
@@ -197,6 +267,10 @@ class Player {
             12, 13, 14, 12, 14, 15, // bottom
             16, 17, 18, 16, 18, 19, // right
             20, 21, 22, 20, 22, 23, // left
+            24, 25, 26 , 24, 26, 27,
+            28, 29,30,28,30,31,
+            32,33,34,32,34,35,
+            36,37,38,36,38,39,
         ];
 
         // Now send the element array to GL
@@ -214,6 +288,7 @@ class Player {
 
 
     drawObject(gl, viewMatrix, projectionMatrix, programInfo) {
+
         // Set the drawing position to the "identity" point, which is
         // the center of the scene.
         const modelMatrix = mat4.create();
@@ -231,10 +306,10 @@ class Player {
         //               [0, 0, 1]);       // axis to rotate around (Z)
 
 
-        mat4.rotate(modelMatrix, // destination matrix
-            modelMatrix, // matrix to rotate
-            Math.PI, // amount to rotate in radians
-            [0, 1, 0]); // axis to rotate around (Z)
+        // mat4.rotate(modelMatrix,  // destination matrix
+        //                 modelMatrix,  // matrix to rotate
+        //                 this.rotate,     // amount to rotate in radians
+        //                 [0, 1, 0]);       // axis to rotate around (Z)
 
 
         const modelViewMatrix = mat4.create();
@@ -339,7 +414,7 @@ class Player {
         gl.uniform1i(programInfo.uniformLocations.uSampler, 0);
 
         {
-            const vertexCount = 36;
+            const vertexCount = 40;
             const type = gl.UNSIGNED_SHORT;
             const offset = 0;
             gl.drawElements(gl.TRIANGLES, vertexCount, type, offset);
@@ -347,61 +422,6 @@ class Player {
     }
 
     tick(deltaTime) {
-        if(this.pos[0]>2)
-        {
-            this.pos[0] = 2;
-        }
-        if(this.pos[0]<-2)
-        {
-            this.pos[0] = -2;
-        }
-        if (this.superJump) {
-            this.superJumpTimer--;
-            if (this.superJumpTimer < 0) {
-                this.superJump = false;
-                this.superJumpTimer = 100;
-            }
-        }
-
-        if (this.jetPack) {
-            this.jetPackTimer--;
-            if (this.jetPackTimer < 0) {
-                this.jetPack = false;
-                this.jetPackTimer = 100;
-            }
-        }
-
-        if (this.jetPack) {
-            this.pos[1] = 3;
-            this.pos[0] += this.initSpeed[0];
-            this.pos[2] += this.initSpeed[2];
-
-            this.minX = this.pos[0] - this.baseWidth;
-            this.minY = this.pos[1] - this.height;
-            this.minZ = this.pos[2] - this.baseDepth;
-            this.maxX = this.pos[0] + this.topWidth;
-            this.maxY = this.pos[1] + this.height;
-            this.maxZ = this.pos[2] + this.topDepth;
-        } else {
-
-            if (this.pos[1] < -2.5) {
-                this.pos[1] = -2.51;
-                this.is_jump = false;
-                // this.speed = [0, 0, 0.1];
-                this.speed[1] = 0;
-                vec3.add(this.pos, this.pos, this.speed);
-
-            } else {
-                // this.speed[1] += this.gravity[1];
-                vec3.add(this.speed, this.speed, this.gravity);
-                vec3.add(this.pos, this.pos, this.speed);
-            }
-            this.minX = this.pos[0] - this.baseWidth;
-            this.minY = this.pos[1] - this.height;
-            this.minZ = this.pos[2] - this.baseDepth;
-            this.maxX = this.pos[0] + this.topWidth;
-            this.maxY = this.pos[1] + this.height;
-            this.maxZ = this.pos[2] + this.topDepth;
-        }
+        this.rotate = this.rotate + this.rotationSpeed * deltaTime
     }
 }
