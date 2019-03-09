@@ -210,12 +210,25 @@ function main() {
     player = new Player(gl, [0, -2.5, 7]);
     policeman = new Police(gl, [0, -2.5, 2]);
     dog = new Dog(gl, [0, -2.5, 3]);
-    finishLine = new FinishLine(gl, [0, 0, 1300]);
+    finishLine = new FinishLine(gl, [0, 0, 1000]);
 
     keyBindings();
 
     {
-        trains.push(new Train(gl, [0, -2, 100], 10));
+        trains.push(new Train(gl, [0, -2, 100], 5, 'cargo1.jpg'));
+        trains.push(new Train(gl, [2, -2, 300], 5, 'cargo2.png'));
+        trains.push(new Train(gl, [-2, -2, 400], 5, 'cargo3.png'));
+
+        trains.push(new Train(gl, [0, -2, 600], 5, 'cargo4.png'));
+        trains.push(new Train(gl, [2, -2, 700], 5, 'cargo3.png'));
+        trains.push(new Train(gl, [-2, -2, 800], 5, 'cargo2.png'));
+
+        trains.push(new Train(gl, [0, -2, 900], 5, 'cargo1.jpg'));
+        trains.push(new Train(gl, [2, -2, 1000], 5, 'cargo2.png'));
+
+        trains.push(new Train(gl, [-2, -2, 650], 5, 'cargo4.png'));
+        trains.push(new Train(gl, [0, -2, 750], 5, 'cargo3.png'));
+        trains.push(new Train(gl, [2, -2, 850], 5, 'cargo2.png'));
     }
 
     for (var i = 0; i < 10; ++i) {
@@ -243,7 +256,7 @@ function main() {
         walls.push(new Wall(gl, [-6, 0.6, +50 * i]))
     }
 
-    for (var i = 0; i < 100; ++i) {
+    for (var i = 0; i < 105; ++i) {
         tracks.push(new Track(gl, [0, -3, 10 * i]));
     }
 
@@ -294,7 +307,7 @@ function main() {
 
         pos.push(-2.6);
 
-        pos.push(5 * i);
+        pos.push(3 * i);
 
         coins.push(new Coin(gl, pos));
     }
@@ -318,7 +331,7 @@ function main() {
 
         tick(deltaTime);
         drawScene(gl, programInfo, deltaTime);
-        document.getElementById("Score").innerHTML = "Score "+score;
+        document.getElementById("Score").innerHTML = "Score: "+score;
         if (gameOver) 
         {
             if(gameWon)
@@ -412,21 +425,54 @@ function tick(deltaTime) {
     dog.tick(deltaTime);
 
 
+
     for (var i = 0; i < trains.length; ++i) {
         trains[i].tick(deltaTime);
-        if (eye[2] > trains[i].pos[2] + 20) {
-            trains.splice(i, 1);
+        if (intersect(player, trains[i])) {
+            player.strike1 = true;
+            gameOver = true;
+        } else {
+            if (eye[2] > trains[i].pos[2] + 20) {
+                trains.splice(i, 1);
+            }
         }
     }
 
-    console.log(score)
+    for (var i = 0; i < jetpacks.length; ++i) {
+        if (intersect(player, jetpacks[i])) {
+            jetpacks.splice(i, 1);
+            player.jetPack = true;
+            var f = player.pos[2]+5;
+
+            for(var j=0;j < 20;++j)
+            {   
+                var pos = [];
+                var lane = Math.floor(Math.random() * 3)
+                if (lane == 0) pos.push(0);
+                else if (lane == 1) pos.push(2);
+                else pos.push(-2);
+        
+                pos.push(3.0);
+        
+                pos.push(5 * j);
+        
+                coins.push(new Coin(gl, pos));
+            }
+        } else {
+
+            jetpacks[i].tick();
+            if (eye[2] > jetpacks[i].pos[2] + 20) {
+                jetpacks.splice(i, 1);
+            }
+        }
+    }
+
     for (var i = 0; i < coins.length; ++i) {
 
         coins[i].tick(deltaTime);
         if (intersect( player,coins[i])) {
             coins.splice(i, 1);
             score += 1;
-            console.log("lol" + score);
         }
     }
 
@@ -438,14 +484,16 @@ function tick(deltaTime) {
 
     for (var i = 0; i < barricades.length; ++i) {
         if (intersect(player, barricades[i])) {
-            if (player.strike1) {
-                gameOver = true;
-                policeman.pos[2] += 2;
-            } else {
-                policeman.pos[2] += 1;
-                player.strike1 = true;
-                barricades.splice(i, 1);
-            }
+            player.strike1 = true;
+            gameOver = true;
+            // if (player.strike1) {
+            //     gameOver = true;
+            //     policeman.pos[2] += 2;
+            // } else {
+            //     policeman.pos[2] += 1;
+            //     player.strike1 = true;
+            //     barricades.splice(i, 1);
+            // }
         } else {
             if (eye[2] > barricades[i].pos[2] + 20) {
                 barricades.splice(i, 1);
@@ -479,18 +527,7 @@ function tick(deltaTime) {
         }
 
     }
-    for (var i = 0; i < jetpacks.length; ++i) {
-        if (intersect(player, jetpacks[i])) {
-            jetpacks.splice(i, 1);
-            player.jetPack = true;
-        } else {
 
-            jetpacks[i].tick();
-            if (eye[2] > jetpacks[i].pos[2] + 20) {
-                jetpacks.splice(i, 1);
-            }
-        }
-    }
     for (var i = 0; i < jumpshoes.length; ++i) {
         if (intersect(player, jumpshoes[i])) {
             jumpshoes.splice(i, 1);
@@ -530,8 +567,6 @@ function tick(deltaTime) {
             if (timer % 1000 == 0) {
                 policeman.pos[2] -= 1;
                 player.strike1 = false;
-                console.log("freed at last");
-
             }
         }
     }
@@ -539,7 +574,7 @@ function tick(deltaTime) {
     if (timer == 300) {
         policeman.pos[2] -= 0.25;
     }
-    if (player.pos > 1300) {
+    if (player.pos[2] > 1000) {
         gameOver = true;
         gameWon = true;
     }

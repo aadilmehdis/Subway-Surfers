@@ -1,12 +1,12 @@
 class Train {
 
-    constructor(gl, pos, depth) {
+    constructor(gl, pos, depth, src) {
         this.speed = [0, 0, -0.3];
         this.pos = pos;
         this.rotate = 0;
         this.rotationSpeed = 1;
 
-        this.texture = loadTexture(gl, 'train.jpg');
+        this.texture = loadTexture(gl, src);
 
         // Create a buffer for the cube's vertex positions.
 

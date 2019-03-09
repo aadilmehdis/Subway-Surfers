@@ -367,6 +367,13 @@ class Player {
             this.pos[1] = 3;
             this.pos[0] += this.initSpeed[0];
             this.pos[2] += this.initSpeed[2];
+
+            this.minX = this.pos[0] - this.baseWidth;
+            this.minY = this.pos[1] - this.height;
+            this.minZ = this.pos[2] - this.baseDepth;
+            this.maxX = this.pos[0] + this.topWidth;
+            this.maxY = this.pos[1] + this.height;
+            this.maxZ = this.pos[2] + this.topDepth;
         } else {
 
             if (this.pos[1] < -2.5) {

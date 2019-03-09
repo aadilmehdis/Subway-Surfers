@@ -1,37 +1,103 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>WebGL Demo</title>
-    <link rel="stylesheet" href="../webgl.css" type="text/css">
 
-  </head>
+<head>
+  <meta charset="utf-8">
+  <title>WebGL Demo</title>
+  <link rel="stylesheet" href="../webgl.css" type="text/css">
+  <style>
 
-  <body>
+    .grid-container {
+      display: grid;
+      grid-template-columns: auto auto;
+      padding: 10px;
+    }
+
+    .peach {
+      margin-bottom: 15px;
+      padding: 4px 12px;
+    }
+
+    .danger {
+      background-color: #ffdddd;
+      border-left: 6px solid #f44336;
+    }
+
+    .success {
+      background-color: #ddffdd;
+      border-left: 6px solid #4CAF50;
+    }
+
+    .info {
+      background-color: #e7f3fe;
+      border-left: 6px solid #2196F3;
+    }
+
+
+    .warning {
+      background-color: #ffffcc;
+      border-left: 6px solid #ffeb3b;
+    }
+  </style>
+
+</head>
+
+<body style="background-image: linear-gradient(to top, #09203f 0%, #537895 100%);background-size: cover;background-repeat: no-repeat;
+background-attachment: fixed;">
+
+  <div class="grid-container">
     <canvas id="glcanvas" width="800" height="600" style="background: url('sky.jpeg'); background-size: cover; background-repeat: no-repeat"></canvas>
+
+    <div>
+      <div class="peach info">
+        <h3><b>
+            <div id="Score">
+            </div>
+          </b></h3>
+      </div>
+
+      <div style="display: hidden">
+        <div class="peach success">
+          <h2><b>
+              <div id="Win" style="display: hidden">
+                Game in Progress
+              </div>
+            </b></h2>
+        </div>
+      </div>
+
+    </div>
+
+
+
+  </div>
+
+
+  <!-- <canvas id="glcanvas" width="800" height="600" style="background: url('sky.jpeg'); background-size: cover; background-repeat: no-repeat"></canvas>
     <div id="Win" style="display: hidden">
     </div>
     <div id="Score">
-    </div>
-  </body>
-  <script src="mousetrap.min.js"></script>
-  <script src="./gl-matrix.js"></script>
+    </div> -->
+</body>
+<script src="mousetrap.min.js"></script>
+<script src="./gl-matrix.js"></script>
 
-  <script src="./train.js"></script>
-  <script src="./track.js"></script>
-  <script src="./tree.js"></script>
-  <script src="./barricade.js"></script>
-  <script src="./pavement.js"></script>
-  <script src="./crate.js"></script>
-  <script src="./jetpack.js"></script>
-  <script src="./jumpshoes.js"></script>
-  <script src="./player.js"></script>
-  <script src="./wall.js"></script>
-  <script src="./coin.js"></script>
-  <script src="./hurdle.js"></script>
-  <script src="./sky.js"></script>
-  <script src="./police.js"></script>
-  <script src="./dog.js"></script>
-  <script src="./finishline.js"></script>
-  <script src="./main2.js"></script>
+<script src="./train.js"></script>
+<script src="./track.js"></script>
+<script src="./tree.js"></script>
+<script src="./barricade.js"></script>
+<script src="./pavement.js"></script>
+<script src="./crate.js"></script>
+<script src="./jetpack.js"></script>
+<script src="./jumpshoes.js"></script>
+<script src="./player.js"></script>
+<script src="./wall.js"></script>
+<script src="./coin.js"></script>
+<script src="./hurdle.js"></script>
+<script src="./sky.js"></script>
+<script src="./police.js"></script>
+<script src="./dog.js"></script>
+<script src="./finishline.js"></script>
+<script src="./main2.js"></script>
+
 </html>
